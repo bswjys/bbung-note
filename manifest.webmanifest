@@ -1,0 +1,20 @@
+{
+  "name": "뿡뿡이 기록 · 가족 장건강 노트",
+  "short_name": "뿡뿡이 기록",
+  "description": "먹은 음식과 뿡뿡이를 귀엽게 기록하고 가족과 나누는 장건강 다이어리",
+  "id": "/bbung-note/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF9F1",
+  "theme_color": "#FFF9F1",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": ["lifestyle", "health", "productivity"],
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

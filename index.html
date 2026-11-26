@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>뿡뿡이 기록 · 가족 장건강 노트</title>
+<meta name="theme-color" content="#FFF9F1">
+<meta name="description" content="먹은 음식과 뿡뿡이를 귀엽게 기록하고 가족과 나누는 장건강 다이어리">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="뿡뿡이 기록">
+<link rel="stylesheet" href="./styles.css?v=1">
+</head>
+<body>
+
+<div class="app" id="appRoot">
+
+  <!-- ───────── 헤더 ───────── -->
+  <header class="head">
+    <div class="head-row">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="34" height="34">
+            <circle cx="16" cy="15" r="6" fill="#BFE9D6"/>
+            <circle cx="28" cy="10" r="4.6" fill="#BFE9D6"/>
+            <circle cx="44" cy="17" r="7" fill="#FFD7BE"/>
+            <circle cx="54" cy="12" r="5" fill="#FFD7BE"/>
+            <ellipse cx="32" cy="40" rx="22" ry="19" fill="#FFFDF8" stroke="#F2E2D2" stroke-width="2"/>
+            <circle cx="32" cy="38" r="15" fill="#FFE9C9"/>
+            <ellipse cx="26" cy="37" rx="2.1" ry="2.7" fill="#5B463A"/>
+            <ellipse cx="38" cy="37" rx="2.1" ry="2.7" fill="#5B463A"/>
+            <circle cx="21" cy="43" r="3.4" fill="#FFB3B3" opacity=".65"/>
+            <circle cx="43" cy="43" r="3.4" fill="#FFB3B3" opacity=".65"/>
+            <path d="M29 45c1.6 2 4.4 2 6 0" fill="none" stroke="#7A5B4A" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>뿡뿡이 기록</strong>
+          <small id="brandSub">엄마의 장건강 노트</small>
+        </span>
+      </div>
+
+      <div class="head-tools">
+        <button type="button" class="icon-btn" id="soundBtn" aria-pressed="true" aria-label="소리 끄기" title="소리 켜기/끄기">🔊</button>
+        <button type="button" class="icon-btn" id="linkBtn" aria-label="가족 공유 설정" title="가족 공유">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M10 13a4 4 0 0 0 5.7 0l2.3-2.3a4 4 0 0 0-5.7-5.7L11 6.3"/>
+            <path d="M14 11a4 4 0 0 0-5.7 0L6 13.3a4 4 0 0 0 5.7 5.7L13 17.7"/>
+          </svg>
+          <i class="share-dot" id="shareDot" data-mode="local" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="share-btn" id="shareCardBtn">💌 <span>뿡밍아웃</span></button>
+      </div>
+    </div>
+
+    <nav class="family" aria-label="가족 선택">
+      <span class="family-label">가족</span>
+      <div class="family-tabs" id="familyTabs" role="tablist" aria-label="가족 구성원">
+        <button type="button" class="fam" data-who="mom" role="tab" aria-selected="true"><b>👩</b>엄마</button>
+        <button type="button" class="fam" data-who="dad" role="tab" aria-selected="false"><b>👨</b>아빠</button>
+        <button type="button" class="fam" data-who="sarang" role="tab" aria-selected="false"><b>🐥</b>사랑</button>
+        <button type="button" class="fam" data-who="harang" role="tab" aria-selected="false"><b>🐰</b>하랑</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ───────── 기록하기 ───────── -->
+    <section class="view" id="viewLog">
+      <div class="hello">
+        <div>
+          <p class="hello-date" id="todayLabel">11월 26일 목요일</p>
+          <h2 class="hello-title" id="helloTitle">엄마, 오늘 뭐 드셨어요?</h2>
+        </div>
+        <div class="hello-face" id="helloFace" aria-hidden="true">🌿</div>
+      </div>
+
+      <div class="card input-card">
+        <div class="preview-wrap">
+          <div class="preview-circle" id="previewCircle" data-tone="butter">
+            <span class="preview-emoji" id="previewEmoji">🍽️</span>
+          </div>
+          <div class="preview-info">
+            <p class="preview-name" id="previewName">음식을 적으면 그림이 뿅!</p>
+            <p class="preview-hint" id="previewHint">양파, 사과, 마늘처럼 적어 보세요</p>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <input id="foodInput" type="text" placeholder="예: 양파" autocomplete="off" enterkeyhint="done" maxlength="20" aria-label="먹은 음식">
+          <button type="button" class="btn-primary" id="saveBtn">저장</button>
+        </div>
+        <div class="quick-row" id="quickRow" aria-label="자주 먹는 음식"></div>
+      </div>
+
+      <div class="stage-block">
+        <div class="sec-head">
+          <h3>지금 뿡뿡이는?</h3>
+          <span class="sec-sub">누르면 바로 저장!</span>
+        </div>
+        <div class="stage-grid" id="stageGrid">
+          <button type="button" class="stage" data-stage="triple" data-tone="peach">
+            <span class="stage-puffs">💨💨💨</span>
+            <span class="stage-label">뿡뿡뿡</span>
+            <span class="stage-desc">묵직하게</span>
+          </button>
+          <button type="button" class="stage" data-stage="double" data-tone="butter">
+            <span class="stage-puffs">💨💨</span>
+            <span class="stage-label">뿡뿡</span>
+            <span class="stage-desc">통통</span>
+          </button>
+          <button type="button" class="stage" data-stage="single" data-tone="lilac">
+            <span class="stage-puffs">💨</span>
+            <span class="stage-label">뿡</span>
+            <span class="stage-desc">앙증맞게</span>
+          </button>
+          <button type="button" class="stage" data-stage="calm" data-tone="mint">
+            <span class="stage-puffs">🌿</span>
+            <span class="stage-label">편안</span>
+            <span class="stage-desc">산뜻하게</span>
+          </button>
+        </div>
+        <p class="stage-hint" id="stageHint">음식을 적고 <b>뿡뿡 버튼</b>을 누르면 그 칸에 바로 담겨요</p>
+      </div>
+
+      <div class="card tip-card">
+        <div class="tip-head">
+          <span class="tip-heart" aria-hidden="true">💗</span>
+          <div>
+            <p class="tip-kicker">오늘의 건강 일기 TIP</p>
+            <p class="tip-title" id="tipTitle">양파는 익혀서</p>
+          </div>
+        </div>
+        <ol class="tip-list" id="tipList"></ol>
+        <p class="tip-foot" id="tipFoot"></p>
+      </div>
+    </section>
+
+    <!-- ───────── 뿡뿡 표 ───────── -->
+    <section class="view" id="viewBoard" hidden>
+      <div class="board-head">
+        <div>
+          <p class="hello-date" id="boardDate">오늘</p>
+          <h2 class="hello-title" id="boardTitle">엄마의 뿡뿡 표</h2>
+        </div>
+        <div class="range-tabs" id="rangeTabs" role="group" aria-label="기간">
+          <button type="button" data-range="today" class="on">오늘</button>
+          <button type="button" data-range="week">7일</button>
+          <button type="button" data-range="all">전체</button>
+        </div>
+      </div>
+      <div class="board" id="board"></div>
+      <p class="board-foot">칩을 누르면 소리와 함께 메모를 남길 수 있어요</p>
+    </section>
+  </main>
+
+  <!-- ───────── 하단 탭 ───────── -->
+  <nav class="tabbar" aria-label="화면 전환">
+    <button type="button" class="tab on" data-view="log"><span>📝</span>기록하기</button>
+    <button type="button" class="tab" data-view="board"><span>💨</span>뿡뿡 표<i class="tab-count" id="tabCount" hidden>0</i></button>
+  </nav>
+</div>
+
+<!-- ───────── 상세 시트 ───────── -->
+<div class="sheet-wrap" id="detailWrap" hidden>
+  <div class="sheet-backdrop" data-close="detail"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <div class="detail-top">
+      <div class="detail-circle" id="detailCircle" data-tone="butter">
+        <span id="detailEmoji">🍽️</span>
+      </div>
+      <div class="detail-top-info">
+        <h3 id="detailTitle">양파</h3>
+        <p id="detailWhen">오늘 오후 12:04</p>
+      </div>
+      <button type="button" class="sheet-x" id="detailClose" aria-label="닫기">✕</button>
+    </div>
+
+    <p class="field-label">지금은 어때요?</p>
+    <div class="detail-stages" id="detailStages" role="group" aria-label="뿡뿡 단계">
+      <button type="button" data-stage="triple">💨💨💨<span>뿡뿡뿡</span></button>
+      <button type="button" data-stage="double">💨💨<span>뿡뿡</span></button>
+      <button type="button" data-stage="single">💨<span>뿡</span></button>
+      <button type="button" data-stage="calm">🌿<span>편안</span></button>
+    </div>
+
+    <label class="field-label" for="memoInput">메모</label>
+    <textarea id="memoInput" rows="3" maxlength="120" placeholder="예: 마늘 2개까지 괜찮은 것 같음"></textarea>
+
+    <details class="emoji-more" id="emojiMore">
+      <summary>음식 그림 바꾸기 <span>다른 그림으로 바꿀 수 있어요</span></summary>
+      <div class="emoji-grid" id="emojiGrid"></div>
+    </details>
+
+    <div class="sheet-actions">
+      <button type="button" class="btn-ghost danger" id="detailDelete">삭제</button>
+      <button type="button" class="btn-primary wide" id="detailSave">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ───────── 공유 카드 시트 ───────── -->
+<div class="sheet-wrap" id="shareWrap" hidden>
+  <div class="sheet-backdrop" data-close="share"></div>
+  <div class="sheet share-sheet" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <div class="share-head">
+      <h3 id="shareTitle">💌 내 건강 뿡밍아웃</h3>
+      <button type="button" class="sheet-x" id="shareClose" aria-label="닫기">✕</button>
+    </div>
+    <p class="share-sub" id="shareSub">엄마의 뿡뿡 표를 귀여운 카드로 만들었어요</p>
+    <div class="share-preview">
+      <img id="shareImg" alt="뿡뿡이 기록 공유 카드 미리보기">
+      <div class="share-loading" id="shareLoading">카드를 만들고 있어요…</div>
+    </div>
+    <div class="sheet-actions">
+      <button type="button" class="btn-ghost" id="shareSave">이미지 저장</button>
+      <button type="button" class="btn-primary wide" id="shareSend">공유하기</button>
+    </div>
+    <p class="share-note">카톡·인스타그램으로 바로 보낼 수 있어요</p>
+  </div>
+</div>
+
+<!-- ───────── 가족 공유 시트 ───────── -->
+<div class="sheet-wrap" id="linkWrap" hidden>
+  <div class="sheet-backdrop" data-close="link"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="linkTitle">
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <div class="share-head">
+      <h3 id="linkTitle">🔗 가족 공유</h3>
+      <button type="button" class="sheet-x" id="linkClose" aria-label="닫기">✕</button>
+    </div>
+    <p class="link-status" id="linkStatus" data-mode="local">가족 공유 꺼짐 · 이 기기에만 저장돼요</p>
+    <p class="link-help">방 코드를 정하면 가족이 같은 표를 함께 볼 수 있어요. 켜지 않아도 기록은 이 기기에 잘 저장돼요.</p>
+    <label class="field-label" for="roomInput">방 코드</label>
+    <div class="input-row">
+      <input id="roomInput" type="text" maxlength="12" placeholder="예: 우리가족" autocomplete="off">
+      <button type="button" class="btn-mini" id="roomNew">새로 만들기</button>
+    </div>
+    <div class="link-actions">
+      <button type="button" class="btn-ghost" id="linkLeave" hidden>공유 끄기</button>
+      <button type="button" class="btn-primary wide" id="linkSave">가족 공유 켜기</button>
+    </div>
+    <button type="button" class="link-invite" id="linkInvite" hidden>초대 링크 복사하기</button>
+    <p class="link-note">수유·하트노트와 같은 안전한 저장소를 쓰지만, 뿡뿡이 기록은 <b>bbung_rooms</b>에 따로 보관돼요.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="./app.js?v=1"></script>
+</body>
+</html>
