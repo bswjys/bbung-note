@@ -246,6 +246,40 @@ async def run():
         check("다시 저장해도 메모 그대로", len(recs) == 1 and recs[0]["note"] == "사과는 반 개가 딱 좋아",
               str(recs))
 
+        # ── 5b. 날짜가 지난 같은 음식도 중복 없이 오늘 표에 ──
+        print("\n[5b] 날짜가 지난 음식 재입력")
+        from datetime import timedelta
+        yday = datetime.now().astimezone() - timedelta(days=1)
+        old_iso = yday.isoformat(timespec="seconds")
+        old_ms = int(yday.timestamp() * 1000)
+        ctx_o, page_o = await new_page(browser, who="mom", seed=[{
+            "id": "old1", "who": "mom", "food": "양파", "emoji": "🧅", "tone": "peach", "cat": "gas",
+            "stage": "triple", "note": "어제 적어 둔 메모", "at": old_iso, "updatedAt": old_ms,
+        }])
+        await goto(page_o, port)
+        await page_o.click(".tab[data-view='board']")
+        await page_o.wait_for_timeout(250)
+        check("어제 기록은 오늘 표에 없음", await page_o.locator(".chip").count() == 0)
+        await page_o.click("#rangeTabs button[data-range='all']")
+        await page_o.wait_for_timeout(250)
+        check("전체에서는 어제 양파 보임", await page_o.locator(".chip").count() == 1)
+        await page_o.click("#rangeTabs button[data-range='today']")
+        await page_o.click(".tab[data-view='log']")
+        await page_o.fill("#foodInput", "양파")
+        await page_o.click(".stage[data-stage='double']")
+        await page_o.wait_for_timeout(350)
+        check("오늘 다시 저장해도 칩 1개", await page_o.locator(".chip").count() == 1)
+        check("오늘 표에 바로 보임", await board_chip_count(page_o, ".col[data-stage='double'] .chip") == 1)
+        check("어제 메모 그대로", await page_o.locator(".chip-memo").count() == 1)
+        old_recs = await page_o.evaluate("window.__bbung.records.filter(r => !r.deleted)")
+        check("레코드는 여전히 1개", len(old_recs) == 1, str(old_recs))
+        check("단계만 뿡뿡으로 이동", len(old_recs) == 1 and old_recs[0]["stage"] == "double", str(old_recs))
+        check("메모 보존", len(old_recs) == 1 and old_recs[0]["note"] == "어제 적어 둔 메모", str(old_recs))
+        check("원래 기록 시각은 그대로", len(old_recs) == 1 and old_recs[0]["at"] == old_iso,
+              str(len(old_recs) == 1 and old_recs[0].get("at")))
+        check("updatedAt은 갱신", len(old_recs) == 1 and old_recs[0]["updatedAt"] > old_ms)
+        await ctx_o.close()
+
         # ── 6. 상세 · 소리 · 메모 · 단계 변경 ──
         print("\n[6] 칩 클릭 · 방귀 소리 · 상세/메모")
         before = await page.evaluate("window.__bbung.soundLog.length")

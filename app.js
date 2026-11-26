@@ -396,15 +396,23 @@
   function memberRecords(id) {
     return state.records.filter((r) => r.who === id && !r.deleted);
   }
+  // 기간은 '마지막으로 손댄 때'(updatedAt) 기준 — 같은 음식을 다시 저장하면
+  // 기존 칸에서 단계만 옮겨도 오늘 표에 그대로 보여요.
+  function stampOf(rec) {
+    const ms = Number(rec.updatedAt);
+    if (ms) return ms;
+    const at = Date.parse(rec.at);
+    return Number.isFinite(at) ? at : Date.now();
+  }
   function inRange(rec, how) {
     if (how === 'all') return true;
-    const day = localKey(new Date(rec.at));
-    if (how === 'today') return day === localKey();
+    const stamp = stampOf(rec);
+    if (how === 'today') return localKey(new Date(stamp)) === localKey();
     if (how === 'week') {
       const start = new Date();
       start.setHours(0, 0, 0, 0);
       start.setDate(start.getDate() - 6);
-      return new Date(rec.at) >= start;
+      return stamp >= start.getTime();
     }
     return true;
   }
@@ -837,7 +845,7 @@
     const tone = toneOf(rec.tone);
 
     $('detailTitle').textContent = rec.food;
-    $('detailWhen').textContent = `${timeLabel(rec.at)} · ${st.label}`;
+    $('detailWhen').textContent = `${timeLabel(new Date(stampOf(rec)).toISOString())} · ${st.label}`;
     const circle = $('detailCircle');
     circle.dataset.tone = tone;
     $('detailEmoji').textContent = rec.emoji || rec.food.slice(0, 1);
