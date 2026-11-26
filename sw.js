@@ -1,9 +1,20 @@
-/* 뿡뿡이 기록 · 오프라인 캐시 (v2)
+/* 뿡뿡이 기록 · 오프라인 캐시 (v3)
  *  - HTML·코드: 네트워크 우선 → 오프라인일 때만 캐시 (새 HTML + 옛 JS 섞임 방지)
- *  - 아이콘·사진·manifest: 캐시 우선
+ *  - 아이콘·사진·음식 그림·manifest: 캐시 우선
+ *  - v3: 한국 음식·과일 그림(foods/*.webp) 32종 추가
  */
-const CACHE = 'bbung-note-v2';
-const VERSION = '2';
+const CACHE = 'bbung-note-v3';
+const VERSION = '3';
+const FOOD_PICS = [
+  './foods/chamoe.webp', './foods/jadu.webp', './foods/gam.webp', './foods/muhwagwa.webp',
+  './foods/seongnyu.webp', './foods/salgu.webp', './foods/daechu.webp', './foods/maesil.webp',
+  './foods/oi.webp', './foods/aehobak.webp', './foods/kongnamul.webp', './foods/sigeumchi.webp',
+  './foods/dubu.webp', './foods/gim.webp', './foods/eomuk.webp', './foods/godeungeo.webp',
+  './foods/kimchi-jjigae.webp', './foods/doenjang-jjigae.webp', './foods/miyeokguk.webp', './foods/sundaeguk.webp',
+  './foods/gimbap.webp', './foods/tteokbokki.webp', './foods/tteokguk.webp', './foods/samgyeopsal.webp',
+  './foods/bibimbap.webp', './foods/naengmyeon.webp', './foods/jjajangmyeon.webp', './foods/kalguksu.webp',
+  './foods/buchimgae.webp', './foods/gyeranmari.webp', './foods/japchae.webp', './foods/galbijjim.webp',
+];
 const ASSETS = [
   './',
   './index.html',
@@ -23,6 +34,7 @@ const ASSETS = [
   './photos/dad.jpg',
   './photos/sarang.jpg',
   './photos/harang.jpg',
+  ...FOOD_PICS,
 ];
 
 const isCode = (path) => /\/app\.js$/.test(path) || /\/styles\.css$/.test(path);

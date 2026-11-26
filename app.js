@@ -36,182 +36,454 @@
 
   const TONES = ['peach', 'mint', 'lilac', 'butter', 'rose', 'sky'];
 
-  /* ───────── 음식 사전 (180여 종) ───────── */
+  /* ───────── 음식 사전 (387종 · 사진 그림 32종) ───────── */
   const FOODS = [
-    // 가스가 생기기 쉬운 음식
+    // 가스가 생기기 쉬운 음식 · 채소와 기본 재료
     { n: '양파', e: '🧅', c: 'gas', t: 'peach' },
     { n: '마늘', e: '🧄', c: 'gas', t: 'peach' },
     { n: '대파', e: '🌱', c: 'gas', t: 'mint' },
     { n: '부추', e: '🌿', c: 'gas', t: 'mint' },
     { n: '마늘종', e: '🌱', c: 'gas', t: 'mint' },
+    { n: '쪽파', e: '🌱', c: 'gas', t: 'mint' },
+    { n: '실파', e: '🌱', c: 'gas', t: 'mint' },
+    { n: '양파즙', e: '🧅', c: 'gas', t: 'peach' },
+    { n: '생강', e: '🫚', c: 'gas', t: 'butter' },
     { n: '콩', e: '🫘', c: 'gas', t: 'peach' },
-    { n: '콩나물', e: '🌱', c: 'gas', t: 'mint' },
-    { n: '두부', e: '🍥', c: 'gas', t: 'butter' },
-    { n: '된장찌개', e: '🍲', c: 'gas', t: 'peach' },
+    { n: '콩나물', e: '🌱', c: 'gas', t: 'mint', p: 'kongnamul' },
+    { n: '두부', e: '🍥', c: 'gas', t: 'butter', p: 'dubu' },
+    { n: '두부부침', e: '🍥', c: 'gas', t: 'butter', p: 'dubu' },
+    { n: '두부조림', e: '🍥', c: 'gas', t: 'butter', p: 'dubu' },
+    { n: '두부김치', e: '🍥', c: 'gas', t: 'rose', p: 'dubu' },
+    { n: '순두부', e: '🍲', c: 'gas', t: 'butter' },
+    { n: '된장찌개', e: '🍲', c: 'gas', t: 'peach', p: 'doenjang-jjigae' },
+    { n: '된장국', e: '🍲', c: 'gas', t: 'butter' },
     { n: '청국장', e: '🍲', c: 'gas', t: 'peach' },
     { n: '순두부찌개', e: '🍲', c: 'gas', t: 'rose' },
+    { n: '비지찌개', e: '🍲', c: 'gas', t: 'butter' },
     { n: '김치', e: '🥬', c: 'gas', t: 'rose' },
     { n: '깍두기', e: '🥕', c: 'gas', t: 'rose' },
+    { n: '총각김치', e: '🥕', c: 'gas', t: 'rose' },
+    { n: '열무김치', e: '🥬', c: 'gas', t: 'mint' },
+    { n: '백김치', e: '🥬', c: 'gas', t: 'butter' },
+    { n: '나박김치', e: '🥬', c: 'gas', t: 'rose' },
+    { n: '파김치', e: '🌱', c: 'gas', t: 'mint' },
+    { n: '오이소박이', e: '🥒', c: 'gas', t: 'mint' },
+    { n: '깻잎장아찌', e: '🌿', c: 'gas', t: 'mint' },
+    { n: '장아찌', e: '🥒', c: 'gas', t: 'butter' },
     { n: '배추', e: '🥬', c: 'gas', t: 'mint' },
     { n: '브로콜리', e: '🥦', c: 'gas', t: 'mint' },
     { n: '양배추', e: '🥬', c: 'gas', t: 'mint' },
     { n: '콜리플라워', e: '🥦', c: 'gas', t: 'mint' },
+    { n: '케일', e: '🥬', c: 'gas', t: 'mint' },
     { n: '고구마', e: '🍠', c: 'gas', t: 'peach' },
     { n: '감자', e: '🥔', c: 'gas', t: 'butter' },
     { n: '옥수수', e: '🌽', c: 'gas', t: 'butter' },
     { n: '밤', e: '🌰', c: 'gas', t: 'butter' },
-    { n: '사과', e: '🍎', c: 'gas', t: 'rose' },
-    { n: '배', e: '🍐', c: 'gas', t: 'mint' },
-    { n: '복숭아', e: '🍑', c: 'gas', t: 'rose' },
-    { n: '자두', e: '🍑', c: 'gas', t: 'lilac' },
-    { n: '수박', e: '🍉', c: 'gas', t: 'rose' },
-    { n: '멜론', e: '🍈', c: 'gas', t: 'mint' },
-    { n: '참외', e: '🍈', c: 'gas', t: 'butter' },
-    { n: '우유', e: '🥛', c: 'gas', t: 'sky' },
-    { n: '치즈', e: '🧀', c: 'gas', t: 'butter' },
+    { n: '은행', e: '🌰', c: 'gas', t: 'butter' },
+    { n: '도토리', e: '🌰', c: 'gas', t: 'butter' },
     { n: '아이스크림', e: '🍨', c: 'gas', t: 'rose' },
     { n: '빵', e: '🍞', c: 'gas', t: 'butter' },
     { n: '떡', e: '🍡', c: 'gas', t: 'lilac' },
     { n: '라면', e: '🍜', c: 'gas', t: 'peach' },
+    { n: '라볶이', e: '🍜', c: 'gas', t: 'rose' },
     { n: '국수', e: '🍜', c: 'gas', t: 'butter' },
     { n: '맥주', e: '🍺', c: 'gas', t: 'butter' },
     { n: '콜라', e: '🥤', c: 'gas', t: 'rose' },
     { n: '사이다', e: '🥤', c: 'gas', t: 'sky' },
     { n: '탄산수', e: '💧', c: 'gas', t: 'sky' },
+    { n: '이온음료', e: '🥤', c: 'gas', t: 'sky' },
     { n: '햄버거', e: '🍔', c: 'gas', t: 'peach' },
     { n: '피자', e: '🍕', c: 'gas', t: 'rose' },
     { n: '감자튀김', e: '🍟', c: 'gas', t: 'butter' },
     { n: '튀김', e: '🍤', c: 'gas', t: 'peach' },
     { n: '치킨', e: '🍗', c: 'gas', t: 'peach' },
-    { n: '삼겹살', e: '🥓', c: 'gas', t: 'rose' },
+    { n: '삼겹살', e: '🥓', c: 'gas', t: 'rose', p: 'samgyeopsal' },
     { n: '소고기', e: '🥩', c: 'gas', t: 'rose' },
+    { n: '돼지고기', e: '🥩', c: 'gas', t: 'rose' },
+    { n: '불고기', e: '🥩', c: 'gas', t: 'peach' },
+    { n: '갈비', e: '🥩', c: 'gas', t: 'rose' },
+    { n: '닭고기', e: '🍗', c: 'gas', t: 'peach' },
+    { n: '닭갈비', e: '🍗', c: 'gas', t: 'rose' },
+    { n: '닭가슴살', e: '🍗', c: 'gas', t: 'mint' },
     { n: '계란', e: '🥚', c: 'gas', t: 'butter' },
     { n: '삶은계란', e: '🥚', c: 'gas', t: 'butter' },
-    { n: '오이', e: '🥒', c: 'gas', t: 'mint' },
+    { n: '계란후라이', e: '🍳', c: 'gas', t: 'butter' },
+    { n: '메추리알', e: '🥚', c: 'gas', t: 'butter' },
     { n: '버섯', e: '🍄', c: 'gas', t: 'butter' },
     { n: '표고버섯', e: '🍄', c: 'gas', t: 'butter' },
+    { n: '느타리버섯', e: '🍄', c: 'gas', t: 'butter' },
+    { n: '새송이버섯', e: '🍄', c: 'gas', t: 'butter' },
+    { n: '팽이버섯', e: '🍄', c: 'gas', t: 'butter' },
+    { n: '양송이버섯', e: '🍄', c: 'gas', t: 'butter' },
+    { n: '송이버섯', e: '🍄', c: 'gas', t: 'butter' },
+    { n: '목이버섯', e: '🍄', c: 'gas', t: 'lilac' },
     { n: '미역', e: '🍲', c: 'gas', t: 'mint' },
     { n: '다시마', e: '🍲', c: 'gas', t: 'mint' },
-    { n: '김', e: '🍙', c: 'gas', t: 'butter' },
+    { n: '김', e: '🍙', c: 'gas', t: 'butter', p: 'gim' },
     { n: '팥', e: '🫘', c: 'gas', t: 'rose' },
+    { n: '콩자반', e: '🫘', c: 'gas', t: 'butter' },
     { n: '땅콩', e: '🥜', c: 'gas', t: 'butter' },
     { n: '아몬드', e: '🌰', c: 'gas', t: 'butter' },
     { n: '호두', e: '🌰', c: 'gas', t: 'butter' },
     { n: '잣', e: '🌰', c: 'gas', t: 'butter' },
-    { n: '바나나', e: '🍌', c: 'gas', t: 'butter' },
-    { n: '망고', e: '🥭', c: 'gas', t: 'butter' },
-    { n: '오렌지', e: '🍊', c: 'gas', t: 'peach' },
-    { n: '귤', e: '🍊', c: 'gas', t: 'peach' },
-    { n: '딸기', e: '🍓', c: 'gas', t: 'rose' },
-    { n: '포도', e: '🍇', c: 'gas', t: 'lilac' },
-    { n: '체리', e: '🍒', c: 'gas', t: 'rose' },
-    { n: '키위', e: '🥝', c: 'gas', t: 'mint' },
-    { n: '파인애플', e: '🍍', c: 'gas', t: 'butter' },
-    { n: '블루베리', e: '🫐', c: 'gas', t: 'lilac' },
-    { n: '토마토', e: '🍅', c: 'gas', t: 'rose' },
-    { n: '방울토마토', e: '🍅', c: 'gas', t: 'rose' },
-    { n: '파프리카', e: '🫑', c: 'gas', t: 'mint' },
-    { n: '피망', e: '🫑', c: 'gas', t: 'mint' },
-    { n: '고추', e: '🌶️', c: 'gas', t: 'rose' },
-    { n: '당근', e: '🥕', c: 'gas', t: 'peach' },
-    { n: '시금치', e: '🥬', c: 'gas', t: 'mint' },
-    { n: '상추', e: '🥬', c: 'gas', t: 'mint' },
-    { n: '깻잎', e: '🌿', c: 'gas', t: 'mint' },
-    { n: '케일', e: '🥬', c: 'gas', t: 'mint' },
-    { n: '아보카도', e: '🥑', c: 'gas', t: 'mint' },
-    { n: '양파즙', e: '🧅', c: 'gas', t: 'peach' },
-    { n: '생강', e: '🫚', c: 'gas', t: 'butter' },
-    { n: '단무지', e: '🥕', c: 'gas', t: 'butter' },
-    { n: '절임', e: '🥒', c: 'gas', t: 'mint' },
-    { n: '무말랭이', e: '🥬', c: 'gas', t: 'butter' },
+    { n: '깨', e: '🌰', c: 'gas', t: 'butter' },
+    { n: '우유', e: '🥛', c: 'gas', t: 'sky' },
+    { n: '치즈', e: '🧀', c: 'gas', t: 'butter' },
     { n: '유제품', e: '🥛', c: 'gas', t: 'sky' },
     { n: '요구르트', e: '🍦', c: 'gas', t: 'sky' },
     { n: '시리얼', e: '🥣', c: 'gas', t: 'butter' },
+    { n: '그래놀라', e: '🥣', c: 'gas', t: 'butter' },
+
+    // 과일 · 열매
+    { n: '사과', e: '🍎', c: 'gas', t: 'rose' },
+    { n: '배', e: '🍐', c: 'gas', t: 'mint' },
+    { n: '복숭아', e: '🍑', c: 'gas', t: 'rose' },
+    { n: '천도복숭아', e: '🍑', c: 'gas', t: 'rose' },
+    { n: '자두', e: '🍑', c: 'gas', t: 'lilac', p: 'jadu' },
+    { n: '푸룬', e: '🫐', c: 'gas', t: 'lilac' },
+    { n: '살구', e: '🍑', c: 'gas', t: 'butter', p: 'salgu' },
+    { n: '앵두', e: '🍒', c: 'gas', t: 'rose' },
+    { n: '수박', e: '🍉', c: 'gas', t: 'rose' },
+    { n: '멜론', e: '🍈', c: 'gas', t: 'mint' },
+    { n: '참외', e: '🍈', c: 'gas', t: 'butter', p: 'chamoe' },
+    { n: '딸기', e: '🍓', c: 'gas', t: 'rose' },
+    { n: '포도', e: '🍇', c: 'gas', t: 'lilac' },
+    { n: '건포도', e: '🍇', c: 'gas', t: 'butter' },
+    { n: '체리', e: '🍒', c: 'gas', t: 'rose' },
+    { n: '키위', e: '🥝', c: 'gas', t: 'mint' },
+    { n: '골드키위', e: '🥝', c: 'gas', t: 'butter' },
+    { n: '블루베리', e: '🫐', c: 'gas', t: 'lilac' },
+    { n: '오디', e: '🫐', c: 'gas', t: 'lilac' },
+    { n: '복분자', e: '🫐', c: 'gas', t: 'lilac' },
+    { n: '라즈베리', e: '🫐', c: 'gas', t: 'rose' },
+    { n: '크랜베리', e: '🫐', c: 'gas', t: 'rose' },
+    { n: '무화과', e: '🍈', c: 'gas', t: 'lilac', p: 'muhwagwa' },
+    { n: '석류', e: '🍎', c: 'gas', t: 'rose', p: 'seongnyu' },
+    { n: '감', e: '🍊', c: 'gas', t: 'rose', p: 'gam' },
+    { n: '대추', e: '🌰', c: 'gas', t: 'butter', p: 'daechu' },
+    { n: '매실', e: '🍏', c: 'gas', t: 'mint', p: 'maesil' },
+    { n: '바나나', e: '🍌', c: 'gas', t: 'butter' },
+    { n: '망고', e: '🥭', c: 'gas', t: 'butter' },
+    { n: '파파야', e: '🥭', c: 'gas', t: 'peach' },
+    { n: '파인애플', e: '🍍', c: 'gas', t: 'butter' },
+    { n: '코코넛', e: '🥥', c: 'gas', t: 'butter' },
+    { n: '리치', e: '🍒', c: 'gas', t: 'rose' },
+    { n: '용과', e: '🍈', c: 'gas', t: 'rose' },
+    { n: '오렌지', e: '🍊', c: 'gas', t: 'peach' },
+    { n: '귤', e: '🍊', c: 'gas', t: 'peach' },
+    { n: '금귤', e: '🍊', c: 'gas', t: 'butter' },
+    { n: '유자', e: '🍊', c: 'gas', t: 'butter' },
+    { n: '자몽', e: '🍊', c: 'gas', t: 'peach' },
+    { n: '레몬', e: '🍋', c: 'gas', t: 'butter' },
+    { n: '라임', e: '🍋', c: 'gas', t: 'mint' },
+    { n: '토마토', e: '🍅', c: 'gas', t: 'rose' },
+    { n: '방울토마토', e: '🍅', c: 'gas', t: 'rose' },
+    { n: '아보카도', e: '🥑', c: 'gas', t: 'mint' },
+    { n: '과일샐러드', e: '🥗', c: 'gas', t: 'rose' },
+    { n: '아로니아', e: '🫐', c: 'gas', t: 'lilac' },
+
+    // 채소 · 나물
+    { n: '오이', e: '🥒', c: 'gas', t: 'mint', p: 'oi' },
+    { n: '애호박', e: '🥒', c: 'gas', t: 'mint', p: 'aehobak' },
+    { n: '단호박', e: '🎃', c: 'gas', t: 'butter' },
+    { n: '호박', e: '🎃', c: 'gas', t: 'butter' },
+    { n: '가지', e: '🍆', c: 'gas', t: 'lilac' },
+    { n: '무', e: '🥬', c: 'gas', t: 'butter' },
+    { n: '총각무', e: '🥬', c: 'gas', t: 'mint' },
+    { n: '열무', e: '🥬', c: 'gas', t: 'mint' },
+    { n: '우엉', e: '🥕', c: 'gas', t: 'butter' },
+    { n: '연근', e: '🥔', c: 'gas', t: 'butter' },
+    { n: '도라지', e: '🥕', c: 'gas', t: 'butter' },
+    { n: '더덕', e: '🥕', c: 'gas', t: 'butter' },
+    { n: '토란', e: '🥔', c: 'gas', t: 'butter' },
+    { n: '마', e: '🥔', c: 'gas', t: 'butter' },
+    { n: '비트', e: '🥕', c: 'gas', t: 'rose' },
+    { n: '아스파라거스', e: '🌱', c: 'gas', t: 'mint' },
+    { n: '죽순', e: '🎋', c: 'gas', t: 'butter' },
+    { n: '여주', e: '🥒', c: 'gas', t: 'mint' },
+    { n: '오크라', e: '🥒', c: 'gas', t: 'mint' },
+    { n: '시금치', e: '🥬', c: 'gas', t: 'mint', p: 'sigeumchi' },
+    { n: '시금치나물', e: '🥬', c: 'gas', t: 'mint', p: 'sigeumchi' },
+    { n: '콩나물무침', e: '🥬', c: 'gas', t: 'mint', p: 'kongnamul' },
+    { n: '상추', e: '🥬', c: 'gas', t: 'mint' },
+    { n: '양상추', e: '🥬', c: 'gas', t: 'mint' },
+    { n: '로메인', e: '🥬', c: 'gas', t: 'mint' },
+    { n: '청경채', e: '🥬', c: 'gas', t: 'mint' },
+    { n: '근대', e: '🥬', c: 'gas', t: 'mint' },
+    { n: '깻잎', e: '🌿', c: 'gas', t: 'mint' },
+    { n: '고사리', e: '🌿', c: 'gas', t: 'mint' },
+    { n: '취나물', e: '🌿', c: 'gas', t: 'mint' },
+    { n: '쑥갓', e: '🌿', c: 'gas', t: 'mint' },
+    { n: '미나리', e: '🌿', c: 'gas', t: 'mint' },
+    { n: '냉이', e: '🌿', c: 'gas', t: 'mint' },
+    { n: '달래', e: '🌿', c: 'gas', t: 'mint' },
+    { n: '도라지무침', e: '🌿', c: 'gas', t: 'butter' },
+    { n: '파프리카', e: '🫑', c: 'gas', t: 'mint' },
+    { n: '피망', e: '🫑', c: 'gas', t: 'mint' },
+    { n: '고추', e: '🌶️', c: 'gas', t: 'rose' },
+    { n: '청양고추', e: '🌶️', c: 'gas', t: 'rose' },
+    { n: '꽈리고추', e: '🌶️', c: 'gas', t: 'rose' },
+    { n: '오이고추', e: '🌶️', c: 'gas', t: 'mint' },
+    { n: '할라피뇨', e: '🌶️', c: 'gas', t: 'mint' },
+    { n: '당근', e: '🥕', c: 'gas', t: 'peach' },
+    { n: '단무지', e: '🥕', c: 'gas', t: 'butter' },
+    { n: '절임', e: '🥒', c: 'gas', t: 'mint' },
+    { n: '무말랭이', e: '🥬', c: 'gas', t: 'butter' },
+    { n: '콩나물국', e: '🍲', c: 'gas', t: 'mint' },
 
     // 속이 편한 음식
     { n: '쌀밥', e: '🍚', c: 'gentle', t: 'butter' },
     { n: '현미밥', e: '🍚', c: 'gentle', t: 'butter' },
+    { n: '잡곡밥', e: '🍚', c: 'gentle', t: 'butter' },
+    { n: '보리밥', e: '🍚', c: 'gentle', t: 'butter' },
+    { n: '콩밥', e: '🍚', c: 'gentle', t: 'butter' },
     { n: '죽', e: '🥣', c: 'gentle', t: 'butter' },
     { n: '흰죽', e: '🥣', c: 'gentle', t: 'butter' },
     { n: '미음', e: '🥣', c: 'gentle', t: 'butter' },
+    { n: '전복죽', e: '🥣', c: 'gentle', t: 'butter' },
+    { n: '야채죽', e: '🥣', c: 'gentle', t: 'mint' },
+    { n: '닭죽', e: '🥣', c: 'gentle', t: 'butter' },
+    { n: '팥죽', e: '🥣', c: 'gentle', t: 'rose' },
+    { n: '호박죽', e: '🥣', c: 'gentle', t: 'butter' },
     { n: '오트밀', e: '🥣', c: 'gentle', t: 'butter' },
+    { n: '누룽지', e: '🍚', c: 'gentle', t: 'butter' },
     { n: '두유', e: '🥛', c: 'gentle', t: 'mint' },
+    { n: '귀리우유', e: '🥛', c: 'gentle', t: 'butter' },
+    { n: '아몬드유', e: '🥛', c: 'gentle', t: 'butter' },
     { n: '따뜻한물', e: '💧', c: 'gentle', t: 'sky' },
     { n: '생강차', e: '🫚', c: 'gentle', t: 'butter' },
     { n: '캐모마일차', e: '🍵', c: 'gentle', t: 'mint' },
     { n: '녹차', e: '🍵', c: 'gentle', t: 'mint' },
     { n: '보리차', e: '🍵', c: 'gentle', t: 'butter' },
-    { n: '닭가슴살', e: '🍗', c: 'gentle', t: 'mint' },
+    { n: '현미녹차', e: '🍵', c: 'gentle', t: 'butter' },
+    { n: '매실차', e: '🍵', c: 'gentle', t: 'mint' },
+    { n: '쑥차', e: '🍵', c: 'gentle', t: 'mint' },
+    { n: '대추차', e: '🍵', c: 'gentle', t: 'butter' },
+    { n: '유자차', e: '🍵', c: 'gentle', t: 'butter' },
+    { n: '인삼차', e: '🍵', c: 'gentle', t: 'butter' },
+    { n: '과일차', e: '🍵', c: 'gentle', t: 'peach' },
     { n: '흰살생선', e: '🐟', c: 'gentle', t: 'sky' },
     { n: '연어', e: '🐟', c: 'gentle', t: 'peach' },
-    { n: '애호박', e: '🥒', c: 'gentle', t: 'mint' },
-    { n: '단호박', e: '🎃', c: 'gentle', t: 'butter' },
-    { n: '호박', e: '🎃', c: 'gentle', t: 'butter' },
     { n: '감자수프', e: '🥣', c: 'gentle', t: 'butter' },
     { n: '크래커', e: '🍘', c: 'gentle', t: 'butter' },
     { n: '토스트', e: '🍞', c: 'gentle', t: 'butter' },
-    { n: '매실차', e: '🍵', c: 'gentle', t: 'mint' },
     { n: '식혜', e: '🥤', c: 'gentle', t: 'butter' },
-    { n: '미역국', e: '🍲', c: 'gentle', t: 'mint' },
+    { n: '수정과', e: '🥤', c: 'gentle', t: 'butter' },
+    { n: '미역국', e: '🍲', c: 'gentle', t: 'mint', p: 'miyeokguk' },
     { n: '북엇국', e: '🍲', c: 'gentle', t: 'sky' },
     { n: '계란찜', e: '🍳', c: 'gentle', t: 'butter' },
-    { n: '두부부침', e: '🍥', c: 'gentle', t: 'butter' },
     { n: '데친나물', e: '🥬', c: 'gentle', t: 'mint' },
     { n: '바나나우유', e: '🥛', c: 'gentle', t: 'butter' },
-    { n: '쑥차', e: '🍵', c: 'gentle', t: 'mint' },
+    { n: '감자국', e: '🍲', c: 'gentle', t: 'butter' },
+    { n: '계란탕', e: '🍳', c: 'gentle', t: 'butter' },
+    { n: '푸딩', e: '🍮', c: 'gentle', t: 'butter' },
+    { n: '양갱', e: '🍡', c: 'gentle', t: 'lilac' },
 
     // 그냥저냥 살펴보는 음식
-    { n: '김밥', e: '🍙', c: 'neutral', t: 'lilac' },
+    { n: '김밥', e: '🍙', c: 'neutral', t: 'lilac', p: 'gimbap' },
+    { n: '주먹밥', e: '🍙', c: 'neutral', t: 'mint' },
+    { n: '김말이', e: '🍙', c: 'neutral', t: 'butter' },
     { n: '초밥', e: '🍣', c: 'neutral', t: 'sky' },
-    { n: '떡볶이', e: '🍢', c: 'neutral', t: 'peach' },
+    { n: '떡볶이', e: '🍢', c: 'neutral', t: 'peach', p: 'tteokbokki' },
+    { n: '떡꼬치', e: '🍢', c: 'neutral', t: 'rose' },
     { n: '순대', e: '🍢', c: 'neutral', t: 'lilac' },
     { n: '붕어빵', e: '🐟', c: 'neutral', t: 'butter' },
     { n: '호떡', e: '🥞', c: 'neutral', t: 'butter' },
+    { n: '계란빵', e: '🥚', c: 'neutral', t: 'butter' },
     { n: '만두', e: '🥟', c: 'neutral', t: 'lilac' },
-    { n: '냉면', e: '🍜', c: 'neutral', t: 'sky' },
-    { n: '비빔밥', e: '🍚', c: 'neutral', t: 'mint' },
-    { n: '카레', e: '🍛', c: 'neutral', t: 'butter' },
-    { n: '짜장면', e: '🍜', c: 'neutral', t: 'peach' },
+    { n: '군만두', e: '🥟', c: 'neutral', t: 'butter' },
+    { n: '찐만두', e: '🥟', c: 'neutral', t: 'lilac' },
+    { n: '인절미', e: '🍡', c: 'neutral', t: 'butter' },
+    { n: '송편', e: '🍡', c: 'neutral', t: 'mint' },
+    { n: '찹쌀떡', e: '🍡', c: 'neutral', t: 'rose' },
+    { n: '약과', e: '🍪', c: 'neutral', t: 'butter' },
+    { n: '한과', e: '🍪', c: 'neutral', t: 'butter' },
+    { n: '냉면', e: '🍜', c: 'neutral', t: 'sky', p: 'naengmyeon' },
+    { n: '막국수', e: '🍜', c: 'neutral', t: 'sky' },
+    { n: '콩국수', e: '🍜', c: 'neutral', t: 'butter' },
+    { n: '비빔국수', e: '🍜', c: 'neutral', t: 'rose' },
+    { n: '잔치국수', e: '🍜', c: 'neutral', t: 'butter' },
+    { n: '쫄면', e: '🍜', c: 'neutral', t: 'rose' },
+    { n: '소바', e: '🍜', c: 'neutral', t: 'butter' },
+    { n: '칼국수', e: '🍜', c: 'neutral', t: 'butter', p: 'kalguksu' },
+    { n: '짜장면', e: '🍜', c: 'neutral', t: 'peach', p: 'jjajangmyeon' },
     { n: '짬뽕', e: '🍜', c: 'neutral', t: 'peach' },
+    { n: '우동', e: '🍜', c: 'neutral', t: 'sky' },
+    { n: '비빔밥', e: '🍚', c: 'neutral', t: 'mint', p: 'bibimbap' },
+    { n: '볶음밥', e: '🍚', c: 'neutral', t: 'butter' },
+    { n: '김치볶음밥', e: '🍚', c: 'neutral', t: 'rose' },
+    { n: '덮밥', e: '🍚', c: 'neutral', t: 'peach' },
+    { n: '리조또', e: '🍚', c: 'neutral', t: 'butter' },
+    { n: '카레', e: '🍛', c: 'neutral', t: 'butter' },
     { n: '탕수육', e: '🍖', c: 'neutral', t: 'peach' },
     { n: '돈까스', e: '🍱', c: 'neutral', t: 'butter' },
-    { n: '우동', e: '🍜', c: 'neutral', t: 'sky' },
     { n: '삼계탕', e: '🍲', c: 'neutral', t: 'butter' },
     { n: '갈비탕', e: '🍲', c: 'neutral', t: 'peach' },
     { n: '설렁탕', e: '🍲', c: 'neutral', t: 'butter' },
     { n: '곰탕', e: '🍲', c: 'neutral', t: 'butter' },
     { n: '감자탕', e: '🍲', c: 'neutral', t: 'rose' },
     { n: '육개장', e: '🍲', c: 'neutral', t: 'rose' },
-    { n: '잡채', e: '🍲', c: 'neutral', t: 'lilac' },
-    { n: '전', e: '🥘', c: 'neutral', t: 'butter' },
-    { n: '계란말이', e: '🍳', c: 'neutral', t: 'butter' },
-    { n: '볶음밥', e: '🍚', c: 'neutral', t: 'butter' },
+    { n: '김치찌개', e: '🍲', c: 'neutral', t: 'rose', p: 'kimchi-jjigae' },
+    { n: '순대국', e: '🍲', c: 'neutral', t: 'butter', p: 'sundaeguk' },
+    { n: '부대찌개', e: '🍲', c: 'neutral', t: 'rose' },
+    { n: '동태찌개', e: '🍲', c: 'neutral', t: 'sky' },
+    { n: '알탕', e: '🍲', c: 'neutral', t: 'rose' },
+    { n: '매운탕', e: '🍲', c: 'neutral', t: 'rose' },
+    { n: '추어탕', e: '🍲', c: 'neutral', t: 'butter' },
+    { n: '떡국', e: '🍲', c: 'neutral', t: 'butter', p: 'tteokguk' },
+    { n: '만둣국', e: '🍲', c: 'neutral', t: 'butter' },
+    { n: '떡만둣국', e: '🍲', c: 'neutral', t: 'butter' },
+    { n: '시래기국', e: '🍲', c: 'neutral', t: 'mint' },
+    { n: '마라탕', e: '🍲', c: 'neutral', t: 'rose' },
+    { n: '마라샹궈', e: '🍲', c: 'neutral', t: 'rose' },
+    { n: '잡채', e: '🍲', c: 'neutral', t: 'lilac', p: 'japchae' },
+    { n: '당면', e: '🍲', c: 'neutral', t: 'butter' },
+    { n: '갈비찜', e: '🍖', c: 'neutral', t: 'rose', p: 'galbijjim' },
+    { n: '전', e: '🥘', c: 'neutral', t: 'butter', p: 'buchimgae' },
+    { n: '부침개', e: '🥘', c: 'neutral', t: 'butter', p: 'buchimgae' },
+    { n: '계란말이', e: '🍳', c: 'neutral', t: 'butter', p: 'gyeranmari' },
     { n: '오므라이스', e: '🍳', c: 'neutral', t: 'peach' },
-    { n: '김치볶음밥', e: '🍚', c: 'neutral', t: 'rose' },
+    { n: '오믈렛', e: '🍳', c: 'neutral', t: 'butter' },
+    { n: '장조림', e: '🥩', c: 'neutral', t: 'butter' },
+    { n: '감자조림', e: '🥔', c: 'neutral', t: 'butter' },
+    { n: '보쌈', e: '🥩', c: 'neutral', t: 'rose' },
+    { n: '족발', e: '🥩', c: 'neutral', t: 'rose' },
+    { n: '제육볶음', e: '🥩', c: 'neutral', t: 'rose' },
+    { n: '양꼬치', e: '🍢', c: 'neutral', t: 'peach' },
+    { n: '스테이크', e: '🥩', c: 'neutral', t: 'rose' },
+    { n: '바비큐', e: '🍖', c: 'neutral', t: 'peach' },
+    { n: '햄', e: '🥓', c: 'neutral', t: 'rose' },
+    { n: '베이컨', e: '🥓', c: 'neutral', t: 'rose' },
+    { n: '소시지', e: '🌭', c: 'neutral', t: 'peach' },
+    { n: '너겟', e: '🍗', c: 'neutral', t: 'butter' },
+    { n: '어묵', e: '🍢', c: 'neutral', t: 'butter', p: 'eomuk' },
+    { n: '어묵볶음', e: '🍢', c: 'neutral', t: 'butter', p: 'eomuk' },
+    { n: '맛살', e: '🦀', c: 'neutral', t: 'rose' },
+    { n: '진미채', e: '🦑', c: 'neutral', t: 'rose' },
+    { n: '멸치볶음', e: '🐟', c: 'neutral', t: 'butter' },
+    { n: '고등어', e: '🐟', c: 'neutral', t: 'sky', p: 'godeungeo' },
+    { n: '갈치', e: '🐟', c: 'neutral', t: 'sky' },
+    { n: '조기', e: '🐟', c: 'neutral', t: 'butter' },
+    { n: '굴비', e: '🐟', c: 'neutral', t: 'butter' },
+    { n: '삼치', e: '🐟', c: 'neutral', t: 'sky' },
+    { n: '꽁치', e: '🐟', c: 'neutral', t: 'sky' },
+    { n: '멸치', e: '🐟', c: 'neutral', t: 'butter' },
+    { n: '참치', e: '🐟', c: 'neutral', t: 'rose' },
+    { n: '오징어', e: '🦑', c: 'neutral', t: 'sky' },
+    { n: '낙지', e: '🐙', c: 'neutral', t: 'rose' },
+    { n: '문어', e: '🐙', c: 'neutral', t: 'lilac' },
+    { n: '주꾸미', e: '🐙', c: 'neutral', t: 'rose' },
+    { n: '새우', e: '🦐', c: 'neutral', t: 'peach' },
+    { n: '꽃게', e: '🦀', c: 'neutral', t: 'rose' },
+    { n: '간장게장', e: '🦀', c: 'neutral', t: 'rose' },
+    { n: '양념게장', e: '🦀', c: 'neutral', t: 'rose' },
+    { n: '조개', e: '🦪', c: 'neutral', t: 'sky' },
+    { n: '홍합', e: '🦪', c: 'neutral', t: 'lilac' },
+    { n: '전복', e: '🦪', c: 'neutral', t: 'butter' },
+    { n: '굴', e: '🦪', c: 'neutral', t: 'sky' },
+    { n: '해삼', e: '🦪', c: 'neutral', t: 'butter' },
+    { n: '젓갈', e: '🐟', c: 'neutral', t: 'rose' },
+    { n: '새우젓', e: '🦐', c: 'neutral', t: 'rose' },
+    { n: '명란젓', e: '🐟', c: 'neutral', t: 'rose' },
     { n: '도넛', e: '🍩', c: 'neutral', t: 'rose' },
     { n: '케이크', e: '🍰', c: 'neutral', t: 'rose' },
+    { n: '머핀', e: '🧁', c: 'neutral', t: 'butter' },
     { n: '마카롱', e: '🍪', c: 'neutral', t: 'lilac' },
     { n: '쿠키', e: '🍪', c: 'neutral', t: 'butter' },
+    { n: '와플', e: '🧇', c: 'neutral', t: 'butter' },
+    { n: '팬케이크', e: '🥞', c: 'neutral', t: 'butter' },
     { n: '초콜릿', e: '🍫', c: 'neutral', t: 'lilac' },
     { n: '사탕', e: '🍬', c: 'neutral', t: 'rose' },
+    { n: '캐러멜', e: '🍬', c: 'neutral', t: 'butter' },
     { n: '젤리', e: '🍬', c: 'neutral', t: 'lilac' },
+    { n: '팥빙수', e: '🍧', c: 'neutral', t: 'rose' },
+    { n: '빙수', e: '🍧', c: 'neutral', t: 'sky' },
     { n: '팝콘', e: '🍿', c: 'neutral', t: 'butter' },
     { n: '감자칩', e: '🍟', c: 'neutral', t: 'butter' },
     { n: '크루아상', e: '🥐', c: 'neutral', t: 'butter' },
     { n: '베이글', e: '🥯', c: 'neutral', t: 'butter' },
     { n: '샌드위치', e: '🥪', c: 'neutral', t: 'mint' },
     { n: '핫도그', e: '🌭', c: 'neutral', t: 'peach' },
+    { n: '부리토', e: '🌯', c: 'neutral', t: 'butter' },
+    { n: '퀘사디아', e: '🫓', c: 'neutral', t: 'butter' },
     { n: '타코', e: '🌮', c: 'neutral', t: 'butter' },
     { n: '파스타', e: '🍝', c: 'neutral', t: 'peach' },
+    { n: '그라탕', e: '🧀', c: 'neutral', t: 'butter' },
     { n: '샐러드', e: '🥗', c: 'neutral', t: 'mint' },
     { n: '스프', e: '🥣', c: 'neutral', t: 'butter' },
+    { n: '커피', e: '☕', c: 'neutral', t: 'lilac' },
     { n: '아메리카노', e: '☕', c: 'neutral', t: 'lilac' },
+    { n: '아이스커피', e: '☕', c: 'neutral', t: 'sky' },
     { n: '카페라떼', e: '☕', c: 'neutral', t: 'butter' },
+    { n: '녹차라떼', e: '🍵', c: 'neutral', t: 'butter' },
+    { n: '밀크티', e: '🧋', c: 'neutral', t: 'butter' },
+    { n: '버블티', e: '🧋', c: 'neutral', t: 'lilac' },
+    { n: '요거트', e: '🍦', c: 'neutral', t: 'sky' },
     { n: '과일주스', e: '🧃', c: 'neutral', t: 'peach' },
+    { n: '주스', e: '🧃', c: 'neutral', t: 'peach' },
     { n: '소주', e: '🍶', c: 'neutral', t: 'sky' },
     { n: '막걸리', e: '🍶', c: 'neutral', t: 'butter' },
     { n: '와인', e: '🍷', c: 'neutral', t: 'rose' },
+    { n: '고추장', e: '🌶️', c: 'neutral', t: 'rose' },
+    { n: '된장', e: '🍲', c: 'neutral', t: 'butter' },
+    { n: '간장', e: '🍶', c: 'neutral', t: 'butter' },
+    { n: '참기름', e: '🫗', c: 'neutral', t: 'butter' },
+    { n: '들기름', e: '🫗', c: 'neutral', t: 'butter' },
+    { n: '소금', e: '🧂', c: 'neutral', t: 'butter' },
+    { n: '설탕', e: '🍬', c: 'neutral', t: 'butter' },
+    { n: '마요네즈', e: '🥚', c: 'neutral', t: 'butter' },
+    { n: '케첩', e: '🍅', c: 'neutral', t: 'rose' },
+    { n: '머스터드', e: '🍋', c: 'neutral', t: 'butter' },
   ];
+
+  /* ───────── 음식 그림(foods/*.webp) — 이모지로는 어색한 한국 음식·과일 32종 ───────── */
+  const PIC_NAMES = {
+    chamoe: '참외', jadu: '자두', gam: '감', muhwagwa: '무화과',
+    seongnyu: '석류', salgu: '살구', daechu: '대추', maesil: '매실',
+    oi: '오이', aehobak: '애호박', kongnamul: '콩나물', sigeumchi: '시금치',
+    dubu: '두부', gim: '김', eomuk: '어묵', godeungeo: '고등어',
+    'kimchi-jjigae': '김치찌개', 'doenjang-jjigae': '된장찌개', miyeokguk: '미역국', sundaeguk: '순대국',
+    gimbap: '김밥', tteokbokki: '떡볶이', tteokguk: '떡국', samgyeopsal: '삼겹살',
+    bibimbap: '비빔밥', naengmyeon: '냉면', jjajangmyeon: '짜장면', kalguksu: '칼국수',
+    buchimgae: '부침개', gyeranmari: '계란말이', japchae: '잡채', galbijjim: '갈비찜',
+  };
+  const PIC_ORDER = Object.keys(PIC_NAMES);
+  const picSrc = (slug) => (slug ? `./foods/${slug}.webp` : '');
+
+  /* ───────── 비슷한 말 사전 — 이름이 조금 달라도 가까운 음식 그림으로 ───────── */
+  const ALIASES = {
+    // 과일
+    샤인머스캣: '포도', 샤인머스켓: '포도', 청포도: '포도', 거봉: '포도', 적포도: '포도', 캠벨포도: '포도', 포도주스: '포도',
+    한라봉: '귤', 천혜향: '귤', 레드향: '귤', 감귤: '귤', 밀감: '귤',
+    대추토마토: '토마토', 스테비아토마토: '토마토', 토마토주스: '토마토',
+    수박화채: '수박', 수박주스: '수박',
+    홍시: '감', 곶감: '감', 단감: '감', 반건시: '감',
+    자두주스: '자두', 복숭아주스: '복숭아',
+    // 계란
+    달걀: '계란', 계란프라이: '계란후라이', 에그: '계란후라이', 흰자: '계란', 노른자: '계란',
+    // 커피·음료
+    라떼: '카페라떼', 에스프레소: '커피', 모카: '커피', 카푸치노: '커피', 콜드브루: '커피',
+    아아: '아이스커피', 아이스아메리카노: '아이스커피', 아샷추: '아이스커피',
+    홍차: '녹차', 우롱차: '녹차', 국화차: '캐모마일차',
+    물: '따뜻한물', 생수: '따뜻한물', 미지근한물: '따뜻한물',
+    요플레: '요거트', 그릭요거트: '요거트', 플레인요거트: '요거트',
+    사과주스: '사과', 오렌지주스: '오렌지', 딸기주스: '딸기', 배주스: '배',
+    // 고추·채소
+    청양고추: '고추', 오이고추: '고추', 꽈리고추: '고추', 홍고추: '고추', 풋고추: '고추', 고춧가루: '고추', 고추가루: '고추',
+    // 고기
+    백숙: '닭고기', 닭백숙: '닭고기', 영계백숙: '닭고기', 통닭: '치킨', 후라이드: '치킨', 양념치킨: '치킨',
+    닭볶음탕: '닭갈비', 닭도리탕: '닭갈비',
+    돼지고기: '돼지고기', 보쌈: '돼지고기', 족발: '돼지고기', 제육볶음: '돼지고기', 수육: '돼지고기',
+    삼겹: '삼겹살', 오겹살: '삼겹살', 목살: '삼겹살', 항정살: '삼겹살', 갈매기살: '삼겹살', 대패삼겹살: '삼겹살',
+    돈가스: '돈까스', 돈부리: '덮밥',
+    // 분식·국
+    오뎅: '어묵', 어묵국: '어묵', 어묵탕: '어묵',
+    김치찌게: '김치찌개', 된장찌게: '된장찌개', 순두부찌게: '순두부찌개', 부대찌게: '부대찌개',
+    떡만두국: '떡만둣국', 만두국: '만둣국',
+    컵라면: '라면', 봉지라면: '라면', 삼각김밥: '주먹밥',
+    // 양념·기타
+    들깨: '깨', 통깨: '깨', 참깨: '깨', 올리브유: '들기름', 식용유: '참기름',
+  };
 
   const EMOJI_PALETTE = [
     '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍑', '🥭', '🍍',
@@ -295,27 +567,51 @@
     return (code - 0xAC00) % 28 === 0 ? withoutFinal : withFinal;
   }
 
+  const foodByName = (name) => FOODS.find((f) => f.n === name) || null;
+
+  // 1) 이름 그대로 → 2) 비슷한 말 그대로 → 3) 가장 긴 부분 키워드
+  //    '어묵탕'은 어묵, '사과주스'는 사과로 (긴 키워드 우선, 같으면 앞에서 시작하는 쪽)
   function findFood(query) {
     const q = normFood(query);
     if (!q) return null;
     const lowered = q.toLowerCase();
-    let exact = null;
-    let contains = null;
+
     for (const f of FOODS) {
-      const name = f.n.toLowerCase();
-      if (name === lowered) { exact = f; break; }
-      if (name.startsWith(lowered) || lowered.startsWith(name)) {
-        if (!contains || f.n.length > contains.n.length) contains = f;
-      }
+      if (f.n.toLowerCase() === lowered) return f;
     }
-    if (exact) return exact;
-    for (const f of FOODS) {
-      const name = f.n.toLowerCase();
-      if (name.includes(lowered) || lowered.includes(name)) {
-        if (!contains || f.n.length > contains.n.length) contains = f;
-      }
+
+    if (ALIASES[q]) {
+      const hit = foodByName(ALIASES[q]);
+      if (hit) return hit;
     }
-    return contains;
+
+    let best = null;
+    const consider = (word, food) => {
+      const key = word.toLowerCase();
+      let pos = lowered.indexOf(key);
+      if (pos < 0) {
+        if (!key.includes(lowered)) return;
+        pos = 0;
+      }
+      const score = key.length * 1000 - pos;
+      if (!best || score > best.score) best = { food, score };
+    };
+    for (const f of FOODS) consider(f.n, f);
+    for (const k of Object.keys(ALIASES)) {
+      const f = foodByName(ALIASES[k]);
+      if (f) consider(k, f);
+    }
+    return best ? best.food : null;
+  }
+
+  // 기록에 붙일 그림 — 직접 고른 이모지가 있으면 그대로 두고, 사전 그림이 있으면 그림
+  function picForRecord(rec) {
+    if (!rec || rec.noIcon) return '';
+    if (rec.pic) return rec.pic;
+    const f = findFood(rec.food);
+    if (!f || !f.p) return '';
+    if (!rec.emoji || rec.emoji === f.e) return f.p;
+    return '';
   }
 
   const familyOf = (id) => FAMILY.find((f) => f.id === id) || FAMILY[0];
@@ -329,6 +625,7 @@
   let editingId = null;
   let draftStage = 'single';
   let draftEmoji = '';
+  let draftPic = '';
   let draftNoIcon = false;
   let draftTone = '';
   let noIconNext = false;
@@ -473,25 +770,43 @@
   }
 
   /* ───────── 미리보기 ───────── */
-  let lastPreviewEmoji = '🍽️';
+  let lastPreviewKey = '';
+
+  // 동그라미 안에 음식 그림(foods/*.webp)을 보여 줄지, 이모지를 보여 줄지
+  function previewFace(opts) {
+    const img = $('previewPic');
+    const el = $('previewEmoji');
+    if (opts.pic && img) {
+      const src = picSrc(opts.pic);
+      if (img.getAttribute('src') !== src) img.src = src;
+      img.hidden = false;
+      el.hidden = true;
+      el.className = 'preview-emoji';
+      return;
+    }
+    if (img) {
+      img.hidden = true;
+      img.removeAttribute('src');
+    }
+    el.hidden = false;
+    el.className = `preview-emoji${opts.cls ? ` ${opts.cls}` : ''}`;
+    el.textContent = opts.text;
+  }
 
   function renderPreview() {
     const q = $('foodInput').value;
     const circle = $('previewCircle');
-    const emojiEl = $('previewEmoji');
     const nameEl = $('previewName');
     const hintEl = $('previewHint');
     const trimmed = q.trim();
 
     if (!trimmed) {
       circle.dataset.tone = 'butter';
-      if (lastPreviewEmoji !== '🍽️') {
-        emojiEl.textContent = '🍽️';
-        emojiEl.classList.remove('badge');
-        emojiEl.classList.remove('asText');
+      if (lastPreviewKey !== 'empty') {
+        previewFace({ text: '🍽️' });
         popCircle();
       }
-      lastPreviewEmoji = '🍽️';
+      lastPreviewKey = 'empty';
       nameEl.textContent = '음식을 적으면 그림이 뿅!';
       hintEl.textContent = '양파, 사과, 마늘처럼 적어 보세요';
       hintEl.dataset.cat = '';
@@ -501,14 +816,12 @@
     // 그림이 잘 맞지 않는 음식은 글자만 보여 줄 수 있어요
     if (noIconNext) {
       circle.dataset.tone = 'lilac';
-      const key = `#${trimmed}`;
-      if (lastPreviewEmoji !== key) {
-        emojiEl.textContent = trimmed.slice(0, 4);
-        emojiEl.classList.remove('badge');
-        emojiEl.classList.add('asText');
+      const key = `text:${trimmed}`;
+      if (lastPreviewKey !== key) {
+        previewFace({ text: trimmed.slice(0, 4), cls: 'asText' });
         popCircle();
       }
-      lastPreviewEmoji = key;
+      lastPreviewKey = key;
       nameEl.innerHTML = `<em>${esc(trimmed)}</em>`;
       hintEl.textContent = '그림 없이 글자만 보여 줄게요';
       hintEl.dataset.cat = '';
@@ -518,13 +831,14 @@
     const f = findFood(trimmed);
     if (f) {
       circle.dataset.tone = toneOf(f.t);
-      if (lastPreviewEmoji !== f.e) {
-        emojiEl.textContent = f.e;
-        emojiEl.classList.remove('badge');
-        emojiEl.classList.remove('asText');
+      const pic = f.p || '';
+      const key = pic ? `pic:${pic}` : `e:${f.e}`;
+      if (lastPreviewKey !== key) {
+        if (pic) previewFace({ pic });
+        else previewFace({ text: f.e });
         popCircle();
       }
-      lastPreviewEmoji = f.e;
+      lastPreviewKey = key;
       nameEl.innerHTML = `<em>${esc(f.n)}</em>`;
       const hints = {
         gas: '가스가 좀 생길 수 있어요 · 조금씩 드세요',
@@ -535,13 +849,12 @@
       hintEl.dataset.cat = f.c;
     } else {
       circle.dataset.tone = 'lilac';
-      if (lastPreviewEmoji !== trimmed) {
-        emojiEl.textContent = trimmed.slice(0, 1);
-        emojiEl.classList.add('badge');
-        emojiEl.classList.remove('asText');
+      const key = `new:${trimmed}`;
+      if (lastPreviewKey !== key) {
+        previewFace({ text: trimmed.slice(0, 1), cls: 'badge' });
         popCircle();
       }
-      lastPreviewEmoji = trimmed;
+      lastPreviewKey = key;
       nameEl.textContent = trimmed;
       hintEl.textContent = '사전에 없는 음식이라 기본 그림으로 보여 줘요';
       hintEl.dataset.cat = '';
@@ -603,10 +916,16 @@
     const tone = toneOf(rec.tone);
     const emoji = rec.emoji || '🍽️';
     const textOnly = !!rec.noIcon;
-    const badge = !rec.emoji && !textOnly;
-    const fig = textOnly
-      ? ''
-      : `<span class="chip-fig${badge ? ' badge' : ''}" data-tone="${tone}">${badge ? esc(rec.food.slice(0, 1)) : esc(emoji)}</span>`;
+    const pic = picForRecord(rec);
+    const badge = !rec.emoji && !textOnly && !pic;
+    let fig = '';
+    if (!textOnly) {
+      if (pic) {
+        fig = `<span class="chip-fig has-pic" data-tone="${tone}"><img class="food-pic" src="${picSrc(pic)}" alt="" loading="lazy" decoding="async"></span>`;
+      } else {
+        fig = `<span class="chip-fig${badge ? ' badge' : ''}" data-tone="${tone}">${badge ? esc(rec.food.slice(0, 1)) : esc(emoji)}</span>`;
+      }
+    }
     return `<button type="button" class="chip${textOnly ? ' text-only' : ''}" data-id="${esc(rec.id)}" aria-label="${esc(rec.food)} ${esc(st.label)}${rec.note ? ' 메모 있음' : ''}">
       ${fig}
       <span class="chip-name">${esc(rec.food)}</span>
@@ -639,6 +958,7 @@
       who,
       food: String(data.food || '').slice(0, 20),
       emoji: data.emoji || '',
+      pic: data.pic || '',
       noIcon: !!data.noIcon,
       tone: toneOf(data.tone),
       cat: data.cat || '',
@@ -686,9 +1006,11 @@
       if (noIcon) {
         existing.noIcon = true;
         existing.emoji = '';
+        existing.pic = '';
         existing.tone = 'lilac';
       } else if (f && !existing.emoji && !existing.noIcon) {
         existing.emoji = f.e;
+        existing.pic = f.p || '';
         existing.tone = toneOf(f.t);
         existing.cat = f.c;
       }
@@ -700,6 +1022,7 @@
         food,
         stage: stageId,
         emoji: noIcon ? '' : (f ? f.e : ''),
+        pic: noIcon || !f ? '' : (f.p || ''),
         tone: f ? f.t : 'lilac',
         cat: f ? f.c : '',
         noIcon,
@@ -709,7 +1032,7 @@
     noIconNext = false;
     renderNoIconToggle();
     input.value = '';
-    lastPreviewEmoji = '';
+    lastPreviewKey = '';
     renderPreview();
     pickedStage = st.id;
     markPicked();
@@ -878,6 +1201,7 @@
     editingId = id;
     draftStage = rec.stage;
     draftEmoji = rec.emoji || '';
+    draftPic = rec.pic || picForRecord(rec) || '';
     draftNoIcon = !!rec.noIcon;
     draftTone = toneOf(rec.tone);
     const st = stageOf(rec.stage);
@@ -900,12 +1224,24 @@
   function paintDetailFace(rec) {
     const circle = $('detailCircle');
     const el = $('detailEmoji');
+    const img = $('detailPic');
     if (draftNoIcon) {
+      if (img) img.hidden = true;
+      el.hidden = false;
       circle.classList.add('asText');
       el.textContent = rec ? rec.food.slice(0, 4) : '글자';
       return;
     }
     circle.classList.remove('asText');
+    if (draftPic && img) {
+      const src = picSrc(draftPic);
+      if (img.getAttribute('src') !== src) img.src = src;
+      img.hidden = false;
+      el.hidden = true;
+      return;
+    }
+    if (img) img.hidden = true;
+    el.hidden = false;
     el.textContent = draftEmoji || (rec ? rec.food.slice(0, 1) : '🍽️');
   }
 
@@ -930,8 +1266,14 @@
 
   function renderEmojiGrid() {
     const textBtn = `<button type="button" class="emoji-none${draftNoIcon ? ' on' : ''}" data-emoji="none" aria-pressed="${draftNoIcon ? 'true' : 'false'}">글만 보기 (그림 없이)</button>`;
-    $('emojiGrid').innerHTML = textBtn + EMOJI_PALETTE
-      .map((e) => `<button type="button" data-emoji="${e}" class="${!draftNoIcon && draftEmoji === e ? 'on' : ''}" aria-label="${e}">${e}</button>`)
+    const picHead = '<p class="pic-head">한국 음식 그림</p>';
+    const picBtns = PIC_ORDER.map((slug) => {
+      const on = !draftNoIcon && draftPic === slug;
+      return `<button type="button" class="pic-btn${on ? ' on' : ''}" data-pic="${slug}" title="${esc(PIC_NAMES[slug])}" aria-label="${esc(PIC_NAMES[slug])} 그림" aria-pressed="${on ? 'true' : 'false'}"><img class="food-pic" src="${picSrc(slug)}" alt="" loading="lazy" decoding="async"></button>`;
+    }).join('');
+    const emojiHead = '<p class="pic-head">이모지</p>';
+    $('emojiGrid').innerHTML = textBtn + picHead + picBtns + emojiHead + EMOJI_PALETTE
+      .map((e) => `<button type="button" data-emoji="${e}" class="${!draftNoIcon && !draftPic && draftEmoji === e ? 'on' : ''}" aria-label="${e}">${e}</button>`)
       .join('');
   }
 
@@ -954,14 +1296,23 @@
     if (draftNoIcon) {
       rec.noIcon = true;
       rec.emoji = '';
+      rec.pic = '';
+    } else if (draftPic) {
+      rec.noIcon = false;
+      rec.emoji = '';
+      rec.pic = draftPic;
+      const f = FOODS.find((x) => x.p === draftPic);
+      rec.tone = f ? toneOf(f.t) : draftTone;
     } else if (draftEmoji) {
       rec.noIcon = false;
+      rec.pic = '';
       rec.emoji = draftEmoji;
       const f = FOODS.find((x) => x.e === draftEmoji);
       rec.tone = f ? toneOf(f.t) : draftTone;
     } else {
       rec.noIcon = false;
       rec.emoji = '';
+      rec.pic = '';
       rec.tone = draftTone;
     }
     rec.updatedAt = Date.now();
@@ -1031,7 +1382,7 @@
   }
 
   /* ───────── 가족 사진 · 뿡뿡이 캐릭터 그림 ───────── */
-  const art = { photos: {}, character: null };
+  const art = { photos: {}, character: null, foods: {}, foodJobs: {} };
   let artPromise = null;
 
   function loadImage(src) {
@@ -1051,6 +1402,25 @@
       ]).then(() => true);
     }
     return artPromise;
+  }
+
+  // 음식 그림은 카드에 쓸 것만 미리 불러 두고, 다 그려질 때까지(decode) 기다려요
+  function loadFoodPic(slug) {
+    if (!slug) return Promise.resolve(null);
+    if (art.foods[slug]) return Promise.resolve(art.foods[slug]);
+    if (!art.foodJobs[slug]) {
+      art.foodJobs[slug] = loadImage(picSrc(slug)).then((im) => {
+        if (!im) return null;
+        const decoded = im.decode ? im.decode().catch(() => {}) : Promise.resolve();
+        return decoded.then(() => { art.foods[slug] = im; return im; });
+      });
+    }
+    return art.foodJobs[slug];
+  }
+
+  function ensureFoodPics(recs) {
+    const jobs = (recs || []).map((r) => loadFoodPic(picForRecord(r)));
+    return Promise.all(jobs).then(() => true);
   }
 
   // 둥근 사진을 꾹 찍은 스티커처럼 카드에 붙여요
@@ -1091,6 +1461,10 @@
         total: today.length,
         textOnly: today.filter((r) => r.noIcon).length,
         icons: today.filter((r) => !r.noIcon).length,
+        foodPics: today.filter((r) => {
+          const slug = picForRecord(r);
+          return !!(slug && art.foods[slug]);
+        }).length,
       };
     }
     const EMOJI_FONT = '"Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji", sans-serif';
@@ -1186,14 +1560,21 @@
           return;
         }
 
-        x.beginPath();
-        x.arc(cx + colW / 2, cy + 41, 30, 0, Math.PI * 2);
-        x.fillStyle = r.tone === 'mint' ? '#D6F0E3' : r.tone === 'peach' ? '#FFD9C2' : r.tone === 'rose' ? '#FFDCE7' : r.tone === 'sky' ? '#DCEFFB' : r.tone === 'butter' ? '#FFEFC6' : '#E7DEFB';
-        x.fill();
+        const slug = picForRecord(r);
+        const pimg = slug ? art.foods[slug] : null;
+        if (pimg) {
+          // 음식 그림은 미리 불러 둔(Image().decode까지 끝난) 그림을 그대로 그려요
+          x.drawImage(pimg, cx + colW / 2 - 31, cy + 41 - 31, 62, 62);
+        } else {
+          x.beginPath();
+          x.arc(cx + colW / 2, cy + 41, 30, 0, Math.PI * 2);
+          x.fillStyle = r.tone === 'mint' ? '#D6F0E3' : r.tone === 'peach' ? '#FFD9C2' : r.tone === 'rose' ? '#FFDCE7' : r.tone === 'sky' ? '#DCEFFB' : r.tone === 'butter' ? '#FFEFC6' : '#E7DEFB';
+          x.fill();
 
-        x.fillStyle = '#4E3B31';
-        x.font = `400 38px ${EMOJI_FONT}`;
-        x.fillText(r.emoji || r.food.slice(0, 1), cx + colW / 2, cy + 54);
+          x.fillStyle = '#4E3B31';
+          x.font = `400 38px ${EMOJI_FONT}`;
+          x.fillText(r.emoji || r.food.slice(0, 1), cx + colW / 2, cy + 54);
+        }
 
         x.fillStyle = '#5C473B';
         x.font = `700 22px ${KR}`;
@@ -1287,6 +1668,7 @@
 
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 30)));
     await ensureArt();
+    await ensureFoodPics(rangeRecords(who, 'today'));
     let canvas;
     try {
       canvas = buildShareCard();
@@ -1559,6 +1941,7 @@
           who: FAMILY.some((f) => f.id === r.who) ? r.who : 'mom',
           food: String(r.food).slice(0, 20),
           emoji: typeof r.emoji === 'string' ? r.emoji : '',
+          pic: typeof r.pic === 'string' ? r.pic : '',
           tone: toneOf(r.tone),
           cat: typeof r.cat === 'string' ? r.cat : '',
           stage: stageOf(r.stage).id,
@@ -1700,7 +2083,7 @@
     $('noIconBtn').addEventListener('click', () => {
       noIconNext = !noIconNext;
       renderNoIconToggle();
-      lastPreviewEmoji = '';
+      lastPreviewKey = '';
       renderPreview();
     });
     $('foodInput').addEventListener('keydown', (e) => {
@@ -1768,17 +2151,30 @@
       });
     });
     $('emojiGrid').addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-emoji]');
+      const btn = e.target.closest('button[data-emoji], button[data-pic]');
       if (!btn) return;
       const rec = state.records.find((r) => r.id === editingId && !r.deleted);
       if (btn.dataset.emoji === 'none') {
         draftNoIcon = true;
         draftEmoji = '';
+        draftPic = '';
+        paintDetailFace(rec);
+        renderEmojiGrid();
+        return;
+      }
+      if (btn.dataset.pic) {
+        draftNoIcon = false;
+        draftPic = btn.dataset.pic;
+        draftEmoji = '';
+        const f = FOODS.find((x) => x.p === draftPic);
+        draftTone = f ? toneOf(f.t) : draftTone;
+        $('detailCircle').dataset.tone = draftTone;
         paintDetailFace(rec);
         renderEmojiGrid();
         return;
       }
       draftNoIcon = false;
+      draftPic = '';
       draftEmoji = btn.dataset.emoji;
       const f = FOODS.find((x) => x.e === draftEmoji);
       draftTone = f ? toneOf(f.t) : draftTone;
@@ -1857,7 +2253,7 @@
     }
 
     window.__bbung = {
-      version: '2',
+      version: '3',
       get records() { return state.records.slice(); },
       get who() { return who; },
       get share() { return { url: share.url, room: share.room }; },
@@ -1867,6 +2263,11 @@
       get boardCount() { return $('board').querySelectorAll('.chip').length; },
       soundLog: sound.log,
       foods: FOODS.length,
+      pics: PIC_ORDER.length,
+      picNames: { ...PIC_NAMES },
+      aliases: Object.keys(ALIASES).length,
+      findFood: (q) => { const f = findFood(q); return f ? { n: f.n, e: f.e, c: f.c, p: f.p || '' } : null; },
+      picFor: (food) => picForRecord({ food }),
       openDetail,
       isMuted: () => !sound.on,
     };

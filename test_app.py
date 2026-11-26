@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
-"""뿡뿡이 기록 v2 · 자동 검증
+"""뿡뿡이 기록 v3 · 자동 검증
 
     LD_LIBRARY_PATH=/workspace/.browserlibs/lib python3 test_app.py
 
-v2에서 바뀐 점
-  · 가족 4명 실제 사진(아빠·엄마·사랑·하랑) — 탭·기록하기 오른쪽 동그란 사진·공유 카드
-  · 브랜드 아이콘/홈 화면 아이콘 = 귀여운 방귀 캐릭터(character.svg)
-  · 상단 브랜드 클릭 → 기록하기로 복귀
-  · 뿡뿡 표의 오늘/7일/전체 필터 제거 → 항상 누적 표시(날짜 문구는 유지)
-  · 뿡밍아웃 모달: 이미지 저장 유지 + 아이폰 공유 시트 저장 / 공유하기
+v3에서 바뀐 점
+  · 음식 사전 387종으로 대폭 확장 + 비슷한 말(별명) 사전 → 샤인머스캣·한라봉·청양고추·어묵탕도 알아서 매칭
+  · 이모지에 없던 한국 음식·과일 32종 전용 그림(foods/*.webp, 128×128 원형) — 미리보기·표 칩·상세·뿡밍아웃 카드 전부
+  · 상세 시트 '음식 그림 바꾸기'에 한국 음식 그림 32개 + 이모지가 함께 (직접 골라 바꾸기)
+  · sw.js bbung-note-v3 · foods 프리캐시
 
 검증 항목
-  · PWA 자원(manifest·sw v2·아이콘·사진)과 첫 화면
+  · PWA 자원(manifest·sw v3·아이콘·사진)과 첫 화면
   · 가족 4명 사진 로드(깨진 이미지 0) · 선택 시 사진/이름 동기화
   · 브랜드 클릭 → 기록하기 복귀
   · 오늘/7일/전체 필터 없음 · 어제 기록도 바로 보이는 누적 표
-  · 음식 입력 → 원형 미리보기 실시간 매칭
+  · 음식 입력 → 원형 미리보기 실시간 매칭 (그림/이모지)
   · 4단계 저장 · 저장 버튼 · 같은 음식 중복 방지(단계만 이동, 메모 보존)
   · 칩 클릭 → 방귀 소리(Web Audio) + 상세 시트 · 메모 · 단계 변경 · 삭제
   · 뿡밍아웃 PNG 카드(1080×1350) · 이미지 저장(데스크톱 내려받기 / 아이폰 공유 시트) · 공유하기
   · 가족 실시간 공유(Firebase) — 실제 테스트 방으로 쓰기/읽기 확인 후 정리
-  · 모바일 390 / 데스크톱 1280 가로 넘침 0 · 콘솔 오류 0
-  · 스크린샷 downloads/bbung_note/01~06
+  · 한국 음식 그림 32종 제공·매칭·칩·상세·카드 · 모바일 390 / 데스크톱 1280 가로 넘침 0 · 콘솔 오류 0
+  · 스크린샷 downloads/bbung_note/01~12
 """
 import asyncio
 import base64
@@ -229,10 +228,11 @@ async def run():
         check("manifest 이름", manifest.get("short_name") == "뿡뿡이 기록", str(manifest.get("short_name")))
         check("manifest 아이콘 3종", len(manifest.get("icons", [])) == 3)
         sw = await page.evaluate("fetch('./sw.js').then(r => r.text())")
-        check("sw 캐시 이름 bbung-note-v2", "bbung-note-v2" in sw)
+        check("sw 캐시 이름 bbung-note-v3", "bbung-note-v3" in sw)
         check("sw에 사진·캐릭터 캐시", "photos/harang.jpg" in sw and "character.svg" in sw)
+        check("sw에 음식 그림 프리캐시", "foods/chamoe.webp" in sw and "foods/kimchi-jjigae.webp" in sw)
         html = await page.evaluate("fetch('./index.html').then(r => r.text())")
-        check("index ?v=2", "styles.css?v=2" in html and "app.js?v=2" in html)
+        check("index ?v=3", "styles.css?v=3" in html and "app.js?v=3" in html)
         for icon in ["icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png",
                      "icon.svg", "icon-maskable.svg", "character.svg", "photos/mom.jpg", "photos/dad.jpg",
                      "photos/sarang.jpg", "photos/harang.jpg"]:
@@ -247,7 +247,7 @@ async def run():
             core = rgb.crop((170, 150, 420, 420)).convert("L")
             dark = sum(1 for px in core.tobytes() if px < 110)
             check("icon-512에 캐릭터 얼굴", dark > 200, f"{dark}px")
-        check("v2 스크립트 버전", await page.evaluate("window.__bbung.version") == "2")
+        check("v3 스크립트 버전", await page.evaluate("window.__bbung.version") == "3")
 
         # ── 2. 가족 전환 · 브랜드 클릭 복귀 ──
         print("\n[2] 가족 전환 · 브랜드 클릭 → 기록하기")
@@ -384,6 +384,181 @@ async def run():
         await page_t.wait_for_timeout(200)
         await ctx_t.close()
 
+        # ── 3c. 한국 음식 · 과일 그림 32종 · 비슷한 말 매칭 ──
+        print("\n[3c] 한국 음식·과일 그림 32종 · 비슷한 말 매칭")
+        food_total = await page.evaluate("window.__bbung.foods")
+        check("음식 사전 300종 이상", food_total >= 300, f"{food_total}종")
+        check("음식 그림 32종", await page.evaluate("window.__bbung.pics") == 32,
+              str(await page.evaluate("window.__bbung.pics")))
+        pic_names = await page.evaluate("window.__bbung.picNames")
+        check("그림 이름 한글", len(pic_names) == 32 and pic_names.get("chamoe") == "참외"
+              and pic_names.get("kimchi-jjigae") == "김치찌개", str(pic_names)[:120])
+        missing_files = []
+        for slug in sorted(pic_names):
+            ok = await page.evaluate(f"fetch('./foods/{slug}.webp').then(r => r.ok)")
+            if not ok:
+                missing_files.append(slug)
+        check("foods/*.webp 32개 모두 제공", len(missing_files) == 0, str(missing_files))
+
+        # 이름이 사전 이름으로 바뀌는 말
+        matches = [
+            ("참외", "참외", "chamoe"), ("김치찌개", "김치찌개", "kimchi-jjigae"),
+            ("삼겹살", "삼겹살", "samgyeopsal"), ("김밥", "김밥", "gimbap"),
+            ("샤인머스캣", "포도", ""), ("거봉", "포도", ""), ("청포도", "포도", ""),
+            ("한라봉", "귤", ""), ("천혜향", "귤", ""), ("레드향", "귤", ""),
+            ("대추토마토", "토마토", ""), ("수박화채", "수박", ""),
+            ("달걀", "계란", ""), ("라떼", "카페라떼", ""), ("에스프레소", "커피", ""),
+            ("요플레", "요거트", ""), ("그릭요거트", "요거트", ""),
+            ("백숙", "닭고기", ""),
+            ("어묵탕", "어묵", "eomuk"), ("오뎅", "어묵", "eomuk"), ("사과주스", "사과", ""),
+            ("김치찌게", "김치찌개", "kimchi-jjigae"), ("된장찌게", "된장찌개", "doenjang-jjigae"),
+            ("떡만두국", "떡만둣국", ""),
+        ]
+        bad = []
+        for query, want, want_pic in matches:
+            got = await page.evaluate("q => window.__bbung.findFood(q)", query)
+            if not got or got.get("n") != want or got.get("p", "") != want_pic:
+                bad.append(f"{query}→{got}")
+        check(f"비슷한 말 {len(matches)}종 모두 맞음", len(bad) == 0, " | ".join(bad[:5]))
+
+        # 사전에 이름은 따로 있어도 같은 그림으로 이어지는 말
+        same_icon = [("삶은계란", "계란"), ("메추리알", "계란"), ("청양고추", "고추"),
+                     ("오이고추", "고추"), ("족발", "돼지고기"), ("제육볶음", "돼지고기"),
+                     ("방울토마토", "토마토"), ("보쌈", "돼지고기")]
+        bad2 = []
+        for query, ref in same_icon:
+            got = await page.evaluate("q => window.__bbung.findFood(q)", query)
+            base = await page.evaluate("q => window.__bbung.findFood(q)", ref)
+            if not got or not base or got.get("e") != base.get("e") or got.get("p", "") != base.get("p", ""):
+                bad2.append(f"{query}→{got}")
+        check(f"같은 그림으로 이어지는 말 {len(same_icon)}종", len(bad2) == 0, " | ".join(bad2[:5]))
+
+        # 화면에서 직접 — 미리보기 그림
+        ctx_k, page_k = await new_page(browser, who="mom")
+        await goto(page_k, port)
+        await page_k.fill("#foodInput", "참외")
+        await page_k.wait_for_timeout(400)
+        check("참외 → 미리보기 그림", await page_k.is_visible("#previewPic"))
+        check("참외 그림 실제 로드", await page_k.evaluate(
+            "(() => { const i = document.getElementById('previewPic'); return i.naturalWidth; })()") > 0)
+        check("그림이 나오면 이모지는 숨김", await page_k.is_hidden("#previewEmoji"))
+        check("참외 이름 표시", "참외" in (await page_k.inner_text("#previewName")))
+        await page_k.screenshot(path=os.path.join(SHOTS, "09_v3_korean_foods_390.png"), full_page=False)
+        check("09_v3_korean_foods_390.png", os.path.getsize(os.path.join(SHOTS, "09_v3_korean_foods_390.png")) > 20000)
+
+        await page_k.fill("#foodInput", "샤인머스캣")
+        await page_k.wait_for_timeout(300)
+        check("샤인머스캣 → 포도 표시", "포도" in (await page_k.inner_text("#previewName")))
+        check("포도는 이모지로", await page_k.is_visible("#previewEmoji"))
+        await page_k.fill("#foodInput", "어묵탕")
+        await page_k.wait_for_timeout(300)
+        check("어묵탕 → 어묵 그림", "어묵" in (await page_k.inner_text("#previewName"))
+              and await page_k.is_visible("#previewPic"))
+
+        # 저장 → 표 칩에 그림
+        await page_k.fill("#foodInput", "참외")
+        await page_k.wait_for_timeout(200)
+        await page_k.click(".stage[data-stage='triple']")
+        await page_k.wait_for_timeout(700)
+        chip_pic = await page_k.evaluate("""(() => {
+            const im = document.querySelector(".col[data-stage='triple'] .chip img.food-pic");
+            return im ? { src: im.getAttribute('src'), w: im.naturalWidth } : null;
+        })()""")
+        check("표 칩에 한국 음식 그림", bool(chip_pic) and chip_pic["w"] > 0
+              and "foods/chamoe.webp" in (chip_pic["src"] or ""), str(chip_pic))
+        rec_k = await page_k.evaluate("window.__bbung.records.filter(r => r.food === '참외')")
+        check("기록에 pic 저장", len(rec_k) == 1 and rec_k[0].get("pic") == "chamoe", str(rec_k))
+
+        for food, stage in [("김치찌개", "single"), ("김밥", "double"), ("삼겹살", "calm")]:
+            await page_k.click(".tab[data-view='log']")
+            await page_k.fill("#foodInput", food)
+            await page_k.wait_for_timeout(200)
+            await page_k.click(f".stage[data-stage='{stage}']")
+            await page_k.wait_for_timeout(600)
+        loaded = await page_k.evaluate("Array.from(document.querySelectorAll('.chip .food-pic')).map(i => i.naturalWidth)")
+        check("칩 그림 4개 모두 로드", len(loaded) == 4 and all(w > 0 for w in loaded), str(loaded))
+        check("표에서 깨진 그림 0", len(await page_k.evaluate(
+            "Array.from(document.images).filter(i => i.getAttribute('src') && i.complete && i.naturalWidth === 0).map(i => i.src)")) == 0)
+        await page_k.screenshot(path=os.path.join(SHOTS, "12_v3_board_pics_390.png"), full_page=False)
+        check("12_v3_board_pics_390.png", os.path.getsize(os.path.join(SHOTS, "12_v3_board_pics_390.png")) > 20000)
+
+        # 상세 시트 — 음식 그림 바꾸기
+        await page_k.click(".col[data-stage='triple'] .chip")
+        await page_k.wait_for_timeout(600)
+        check("상세 동그란에도 그림", await page_k.evaluate(
+            "(() => { const i = document.getElementById('detailPic'); return !i.hidden && i.naturalWidth > 0; })()"))
+        await page_k.click("#emojiMore summary")
+        await page_k.wait_for_timeout(400)
+        check("그림 바꾸기에 한국 음식 32개", await page_k.locator("#emojiGrid .pic-btn").count() == 32,
+              str(await page_k.locator("#emojiGrid .pic-btn").count()))
+        check("그림 바꾸기에 이모지도 함께", await page_k.locator("#emojiGrid button[data-emoji]").count() >= 40)
+        check("현재 그림이 선택되어 있음",
+              "on" in (await page_k.get_attribute("#emojiGrid button[data-pic='chamoe']", "class") or ""))
+        await page_k.click("#emojiGrid button[data-pic='samgyeopsal']")
+        await page_k.wait_for_timeout(350)
+        check("다른 그림 고르면 상세 그림 바뀌",
+              "samgyeopsal" in (await page_k.get_attribute("#detailPic", "src") or ""))
+        await page_k.screenshot(path=os.path.join(SHOTS, "10_v3_food_picker_390.png"), full_page=False)
+        check("10_v3_food_picker_390.png", os.path.getsize(os.path.join(SHOTS, "10_v3_food_picker_390.png")) > 20000)
+        await page_k.click("#detailSave")
+        await page_k.wait_for_timeout(600)
+        rec_k = await page_k.evaluate("window.__bbung.records.filter(r => r.food === '참외')")
+        check("고른 그림이 기록에 저장", len(rec_k) == 1 and rec_k[0].get("pic") == "samgyeopsal", str(rec_k))
+        check("표 칩 그림도 바뀌", "samgyeopsal" in (await page_k.get_attribute(
+            ".col[data-stage='triple'] .chip img.food-pic", "src") or ""))
+
+        # 그림 → 글만 보기로 되돌리기
+        await page_k.click(".col[data-stage='triple'] .chip")
+        await page_k.wait_for_timeout(500)
+        await page_k.click("#emojiMore summary")
+        await page_k.wait_for_timeout(250)
+        await page_k.click("#emojiGrid .emoji-none")
+        await page_k.wait_for_timeout(250)
+        check("글만 보기 선택 시 그림 숨김", await page_k.is_hidden("#detailPic"))
+        await page_k.click("#detailSave")
+        await page_k.wait_for_timeout(500)
+        rec_k = await page_k.evaluate("window.__bbung.records.filter(r => r.food === '참외')")
+        check("pic은 비우고 noIcon 저장", len(rec_k) == 1 and rec_k[0].get("pic") == ""
+              and rec_k[0].get("noIcon") is True, str(rec_k))
+        check("표에서 그림 없이 글자만", await page_k.locator(".chip.text-only").count() == 1)
+
+        # 사진 그림으로 되돌리고 박뮈아웃 카드 확인
+        await page_k.click(".col[data-stage='triple'] .chip")
+        await page_k.wait_for_timeout(500)
+        await page_k.click("#emojiMore summary")
+        await page_k.wait_for_timeout(250)
+        await page_k.click("#emojiGrid button[data-pic='chamoe']")
+        await page_k.wait_for_timeout(250)
+        await page_k.click("#detailSave")
+        await page_k.wait_for_timeout(500)
+        check("그림으로 되돌리기", await page_k.locator(".chip.text-only").count() == 0
+              and await page_k.locator(".chip .food-pic").count() == 4)
+
+        await open_share_card(page_k)
+        ci = await page_k.evaluate("window.__bbung.cardInfo")
+        check("카드에 음식 그림 4개 들어감", bool(ci) and ci.get("foodPics") == 4, str(ci))
+        px = await page_k.evaluate("""(() => {
+            const cv = document.createElement('canvas');
+            const src = document.getElementById('shareImg');
+            cv.width = src.naturalWidth; cv.height = src.naturalHeight;
+            const c = cv.getContext('2d');
+            c.drawImage(src, 0, 0);
+            const read = (x) => [0, 1, 2, 3, 4].map((i) => Array.from(c.getImageData(x - 20 + i * 10, 501, 1, 1).data.slice(0, 3)));
+            return { triple: read(195), double: read(425), single: read(655), calm: read(885) };
+        })()""")
+        varied = [k for k, pts in px.items() if len({tuple(p) for p in pts}) >= 2]
+        check("카드 아이콘이 그림으로 그려짐", len(varied) >= 3, f"{varied} / {px}")
+        data_url = await page_k.evaluate("document.getElementById('shareImg').src")
+        with open(os.path.join(SHOTS, "11_v3_card_korean_foods.png"), "wb") as fh:
+            fh.write(base64.b64decode(data_url.split(",", 1)[1]))
+        check("11_v3_card_korean_foods.png", os.path.getsize(os.path.join(SHOTS, "11_v3_card_korean_foods.png")) > 50000)
+        await page_k.click("#shareClose")
+        await page_k.wait_for_timeout(250)
+
+        for w, h in [(390, 844), (1280, 900)]:
+            check(f"{w} 한국 음식 그림 넘침 0", await page_k.evaluate("document.documentElement.scrollWidth - window.innerWidth") <= 1)
+        await ctx_k.close()
+
         # ── 4. 음식 미리보기 ──
         print("\n[4] 음식 입력 · 실시간 원형 미리보기")
         await page.fill("#foodInput", "양파")
@@ -399,7 +574,7 @@ async def run():
         await page.fill("#foodInput", "우유")
         await page.wait_for_timeout(200)
         check("우유 → 🥛", await page.inner_text("#previewEmoji") == "🥛")
-        await page.fill("#foodInput", "뿡뿡푸딩")
+        await page.fill("#foodInput", "뿡뿡가루")
         await page.wait_for_timeout(200)
         check("사전에 없는 음식은 첫 글자 배지",
               await page.inner_text("#previewEmoji") == "뿡"

@@ -14,7 +14,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="뿡뿡이 기록">
-<link rel="stylesheet" href="./styles.css?v=2">
+<link rel="stylesheet" href="./styles.css?v=3">
 </head>
 <body>
 
@@ -73,6 +73,7 @@
       <div class="card input-card">
         <div class="preview-wrap">
           <div class="preview-circle" id="previewCircle" data-tone="butter">
+            <img class="preview-pic" id="previewPic" alt="" decoding="async" hidden>
             <span class="preview-emoji" id="previewEmoji">🍽️</span>
           </div>
           <div class="preview-info">
@@ -159,6 +160,7 @@
     <div class="sheet-grip" aria-hidden="true"></div>
     <div class="detail-top">
       <div class="detail-circle" id="detailCircle" data-tone="butter">
+        <img class="detail-pic" id="detailPic" alt="" decoding="async" hidden>
         <span id="detailEmoji">🍽️</span>
       </div>
       <div class="detail-top-info">
@@ -180,7 +182,7 @@
     <textarea id="memoInput" rows="3" maxlength="120" placeholder="예: 마늘 2개까지 괜찮은 것 같음"></textarea>
 
     <details class="emoji-more" id="emojiMore">
-      <summary>음식 그림 바꾸기 <span>다른 그림으로 바꿀 수 있어요</span></summary>
+      <summary>음식 그림 바꾸기 <span>한국 음식 그림·이모지 중에서 골라요</span></summary>
       <div class="emoji-grid" id="emojiGrid"></div>
     </details>
 
@@ -240,6 +242,6 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="./app.js?v=2"></script>
+<script src="./app.js?v=3"></script>
 </body>
 </html>
