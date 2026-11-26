@@ -14,7 +14,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="뿡뿡이 기록">
-<link rel="stylesheet" href="./styles.css?v=1">
+<link rel="stylesheet" href="./styles.css?v=2">
 </head>
 <body>
 
@@ -23,27 +23,15 @@
   <!-- ───────── 헤더 ───────── -->
   <header class="head">
     <div class="head-row">
-      <div class="brand">
+      <button type="button" class="brand" id="brandHome" aria-label="뿡뿡이 기록 · 기록하기 화면으로 이동">
         <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64" width="34" height="34">
-            <circle cx="16" cy="15" r="6" fill="#BFE9D6"/>
-            <circle cx="28" cy="10" r="4.6" fill="#BFE9D6"/>
-            <circle cx="44" cy="17" r="7" fill="#FFD7BE"/>
-            <circle cx="54" cy="12" r="5" fill="#FFD7BE"/>
-            <ellipse cx="32" cy="40" rx="22" ry="19" fill="#FFFDF8" stroke="#F2E2D2" stroke-width="2"/>
-            <circle cx="32" cy="38" r="15" fill="#FFE9C9"/>
-            <ellipse cx="26" cy="37" rx="2.1" ry="2.7" fill="#5B463A"/>
-            <ellipse cx="38" cy="37" rx="2.1" ry="2.7" fill="#5B463A"/>
-            <circle cx="21" cy="43" r="3.4" fill="#FFB3B3" opacity=".65"/>
-            <circle cx="43" cy="43" r="3.4" fill="#FFB3B3" opacity=".65"/>
-            <path d="M29 45c1.6 2 4.4 2 6 0" fill="none" stroke="#7A5B4A" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
+          <img src="./character.svg" alt="" width="32" height="32" decoding="async">
         </span>
         <span class="brand-text">
           <strong>뿡뿡이 기록</strong>
           <small id="brandSub">엄마의 장건강 노트</small>
         </span>
-      </div>
+      </button>
 
       <div class="head-tools">
         <button type="button" class="icon-btn" id="soundBtn" aria-pressed="true" aria-label="소리 끄기" title="소리 켜기/끄기">🔊</button>
@@ -61,10 +49,10 @@
     <nav class="family" aria-label="가족 선택">
       <span class="family-label">가족</span>
       <div class="family-tabs" id="familyTabs" role="tablist" aria-label="가족 구성원">
-        <button type="button" class="fam" data-who="mom" role="tab" aria-selected="true"><b>👩</b>엄마</button>
-        <button type="button" class="fam" data-who="dad" role="tab" aria-selected="false"><b>👨</b>아빠</button>
-        <button type="button" class="fam" data-who="sarang" role="tab" aria-selected="false"><b>🐥</b>사랑</button>
-        <button type="button" class="fam" data-who="harang" role="tab" aria-selected="false"><b>🐰</b>하랑</button>
+        <button type="button" class="fam" data-who="mom" role="tab" aria-selected="true"><b class="fam-photo"><img src="./photos/mom.jpg" alt="" width="22" height="22"></b>엄마</button>
+        <button type="button" class="fam" data-who="dad" role="tab" aria-selected="false"><b class="fam-photo"><img src="./photos/dad.jpg" alt="" width="22" height="22"></b>아빠</button>
+        <button type="button" class="fam" data-who="sarang" role="tab" aria-selected="false"><b class="fam-photo"><img src="./photos/sarang.jpg" alt="" width="22" height="22"></b>사랑</button>
+        <button type="button" class="fam" data-who="harang" role="tab" aria-selected="false"><b class="fam-photo"><img src="./photos/harang.jpg" alt="" width="22" height="22"></b>하랑</button>
       </div>
     </nav>
   </header>
@@ -77,7 +65,9 @@
           <p class="hello-date" id="todayLabel">11월 26일 목요일</p>
           <h2 class="hello-title" id="helloTitle">엄마, 오늘 뭐 드셨어요?</h2>
         </div>
-        <div class="hello-face" id="helloFace" aria-hidden="true">🌿</div>
+        <div class="hello-face" id="helloFace" aria-hidden="true">
+          <img id="helloPhoto" src="./photos/mom.jpg" alt="" width="62" height="62" decoding="async">
+        </div>
       </div>
 
       <div class="card input-card">
@@ -88,6 +78,7 @@
           <div class="preview-info">
             <p class="preview-name" id="previewName">음식을 적으면 그림이 뿅!</p>
             <p class="preview-hint" id="previewHint">양파, 사과, 마늘처럼 적어 보세요</p>
+            <button type="button" class="noicon-toggle" id="noIconBtn" aria-pressed="false">그림 없이 글자만</button>
           </div>
         </div>
 
@@ -147,11 +138,6 @@
         <div>
           <p class="hello-date" id="boardDate">오늘</p>
           <h2 class="hello-title" id="boardTitle">엄마의 뿡뿡 표</h2>
-        </div>
-        <div class="range-tabs" id="rangeTabs" role="group" aria-label="기간">
-          <button type="button" data-range="today" class="on">오늘</button>
-          <button type="button" data-range="week">7일</button>
-          <button type="button" data-range="all">전체</button>
         </div>
       </div>
       <div class="board" id="board"></div>
@@ -220,10 +206,10 @@
       <div class="share-loading" id="shareLoading">카드를 만들고 있어요…</div>
     </div>
     <div class="sheet-actions">
-      <button type="button" class="btn-ghost" id="shareSave">이미지 저장</button>
+      <button type="button" class="btn-ghost" id="shareSave">🖼️ 이미지 저장</button>
       <button type="button" class="btn-primary wide" id="shareSend">공유하기</button>
     </div>
-    <p class="share-note">카톡·인스타그램으로 바로 보낼 수 있어요</p>
+    <p class="share-note">위 카드를 꾹 누르면 사진 앱에 저장할 수 있어요<br>공유하기로 카톡·인스타그램에 바로 보내요</p>
   </div>
 </div>
 
@@ -254,6 +240,6 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="./app.js?v=1"></script>
+<script src="./app.js?v=2"></script>
 </body>
 </html>

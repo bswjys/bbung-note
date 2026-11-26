@@ -19,11 +19,12 @@
   const POLL_MS = 5000;
 
   const FAMILY = [
-    { id: 'mom', name: '엄마', emoji: '👩', face: '🌷' },
-    { id: 'dad', name: '아빠', emoji: '👨', face: '🌿' },
-    { id: 'sarang', name: '사랑', emoji: '🐥', face: '⭐' },
-    { id: 'harang', name: '하랑', emoji: '🐰', face: '🍑' },
+    { id: 'mom', name: '엄마', emoji: '👩', face: '🌷', photo: './photos/mom.jpg' },
+    { id: 'dad', name: '아빠', emoji: '👨', face: '🌿', photo: './photos/dad.jpg' },
+    { id: 'sarang', name: '사랑', emoji: '🐥', face: '⭐', photo: './photos/sarang.jpg' },
+    { id: 'harang', name: '하랑', emoji: '🐰', face: '🍑', photo: './photos/harang.jpg' },
   ];
+  const CHARACTER_SRC = './character.svg';
 
   const STAGES = [
     { id: 'triple', label: '뿡뿡뿡', puffs: '💨💨💨', desc: '묵직하게', bg: '#FFD9C2', ink: '#B96A45', solid: '#F6A97E' },
@@ -324,12 +325,13 @@
   const state = { records: [] };
   let who = 'mom';
   let currentView = 'log';
-  let range = 'today';
   let pickedStage = 'single';
   let editingId = null;
   let draftStage = 'single';
   let draftEmoji = '';
+  let draftNoIcon = false;
   let draftTone = '';
+  let noIconNext = false;
   let deleteArmed = false;
   let deleteTimer = null;
   let toastTimer = null;
@@ -452,13 +454,15 @@
     const f = familyOf(who);
     $('brandSub').textContent = `${f.name}의 장건강 노트`;
     $('helloTitle').textContent = `${f.name}, 오늘 뭐 드셨어요?`;
-    $('helloFace').textContent = f.face;
+    const face = $('helloPhoto');
+    if (face && face.getAttribute('src') !== f.photo) face.src = f.photo;
+    if (face) face.alt = `${f.name} 사진`;
     $('boardTitle').textContent = `${f.name}의 뿡뿡 표`;
   }
 
   function renderToday() {
     $('todayLabel').textContent = koreanDate();
-    $('boardDate').textContent = range === 'today' ? `오늘 · ${koreanDate()}` : range === 'week' ? '최근 7일' : '전체 기록';
+    $('boardDate').textContent = `오늘 · ${koreanDate()}`;
   }
 
   function renderTabCount() {
@@ -484,11 +488,29 @@
       if (lastPreviewEmoji !== '🍽️') {
         emojiEl.textContent = '🍽️';
         emojiEl.classList.remove('badge');
+        emojiEl.classList.remove('asText');
         popCircle();
       }
       lastPreviewEmoji = '🍽️';
       nameEl.textContent = '음식을 적으면 그림이 뿅!';
       hintEl.textContent = '양파, 사과, 마늘처럼 적어 보세요';
+      hintEl.dataset.cat = '';
+      return;
+    }
+
+    // 그림이 잘 맞지 않는 음식은 글자만 보여 줄 수 있어요
+    if (noIconNext) {
+      circle.dataset.tone = 'lilac';
+      const key = `#${trimmed}`;
+      if (lastPreviewEmoji !== key) {
+        emojiEl.textContent = trimmed.slice(0, 4);
+        emojiEl.classList.remove('badge');
+        emojiEl.classList.add('asText');
+        popCircle();
+      }
+      lastPreviewEmoji = key;
+      nameEl.innerHTML = `<em>${esc(trimmed)}</em>`;
+      hintEl.textContent = '그림 없이 글자만 보여 줄게요';
       hintEl.dataset.cat = '';
       return;
     }
@@ -499,6 +521,7 @@
       if (lastPreviewEmoji !== f.e) {
         emojiEl.textContent = f.e;
         emojiEl.classList.remove('badge');
+        emojiEl.classList.remove('asText');
         popCircle();
       }
       lastPreviewEmoji = f.e;
@@ -515,6 +538,7 @@
       if (lastPreviewEmoji !== trimmed) {
         emojiEl.textContent = trimmed.slice(0, 1);
         emojiEl.classList.add('badge');
+        emojiEl.classList.remove('asText');
         popCircle();
       }
       lastPreviewEmoji = trimmed;
@@ -578,9 +602,13 @@
     const st = stageOf(rec.stage);
     const tone = toneOf(rec.tone);
     const emoji = rec.emoji || '🍽️';
-    const badge = !rec.emoji;
-    return `<button type="button" class="chip" data-id="${esc(rec.id)}" aria-label="${esc(rec.food)} ${esc(st.label)}${rec.note ? ' 메모 있음' : ''}">
-      <span class="chip-fig${badge ? ' badge' : ''}" data-tone="${tone}">${badge ? esc(rec.food.slice(0, 1)) : esc(emoji)}</span>
+    const textOnly = !!rec.noIcon;
+    const badge = !rec.emoji && !textOnly;
+    const fig = textOnly
+      ? ''
+      : `<span class="chip-fig${badge ? ' badge' : ''}" data-tone="${tone}">${badge ? esc(rec.food.slice(0, 1)) : esc(emoji)}</span>`;
+    return `<button type="button" class="chip${textOnly ? ' text-only' : ''}" data-id="${esc(rec.id)}" aria-label="${esc(rec.food)} ${esc(st.label)}${rec.note ? ' 메모 있음' : ''}">
+      ${fig}
       <span class="chip-name">${esc(rec.food)}</span>
       ${rec.note ? '<span class="chip-memo" aria-hidden="true">💬</span>' : ''}
     </button>`;
@@ -589,7 +617,8 @@
   function renderBoard() {
     renderToday();
     const board = $('board');
-    const recs = rangeRecords(who, range);
+    // 누적 기록만 쌓이는 표 — 기간 필터 없이 항상 전체를 보여 줘요
+    const recs = memberRecords(who).slice().sort((a, b) => stampOf(b) - stampOf(a));
     board.innerHTML = STAGES.map((st) => {
       const list = recs.filter((r) => r.stage === st.id).sort((a, b) => new Date(b.at) - new Date(a.at));
       const body = list.length
@@ -610,6 +639,7 @@
       who,
       food: String(data.food || '').slice(0, 20),
       emoji: data.emoji || '',
+      noIcon: !!data.noIcon,
       tone: toneOf(data.tone),
       cat: data.cat || '',
       stage: stageOf(data.stage).id,
@@ -644,6 +674,7 @@
     const f = findFood(food);
     const key = normFood(food);
     const st = stageOf(stageId);
+    const noIcon = noIconNext;
     const existing = state.records.find((r) => !r.deleted && r.who === who && normFood(r.food) === key);
 
     let rec;
@@ -652,7 +683,11 @@
       // 같은 사람 안에서는 같은 음식을 한 칸에만! 새 칩 대신 단계만 옮기고 메모는 그대로 둬요.
       moved = existing.stage !== st.id;
       existing.stage = st.id;
-      if (f && !existing.emoji) {
+      if (noIcon) {
+        existing.noIcon = true;
+        existing.emoji = '';
+        existing.tone = 'lilac';
+      } else if (f && !existing.emoji && !existing.noIcon) {
         existing.emoji = f.e;
         existing.tone = toneOf(f.t);
         existing.cat = f.c;
@@ -664,12 +699,15 @@
       rec = addRecord({
         food,
         stage: stageId,
-        emoji: f ? f.e : '',
+        emoji: noIcon ? '' : (f ? f.e : ''),
         tone: f ? f.t : 'lilac',
         cat: f ? f.c : '',
+        noIcon,
       });
     }
 
+    noIconNext = false;
+    renderNoIconToggle();
     input.value = '';
     lastPreviewEmoji = '';
     renderPreview();
@@ -840,15 +878,15 @@
     editingId = id;
     draftStage = rec.stage;
     draftEmoji = rec.emoji || '';
+    draftNoIcon = !!rec.noIcon;
     draftTone = toneOf(rec.tone);
     const st = stageOf(rec.stage);
     const tone = toneOf(rec.tone);
 
     $('detailTitle').textContent = rec.food;
     $('detailWhen').textContent = `${timeLabel(new Date(stampOf(rec)).toISOString())} · ${st.label}`;
-    const circle = $('detailCircle');
-    circle.dataset.tone = tone;
-    $('detailEmoji').textContent = rec.emoji || rec.food.slice(0, 1);
+    $('detailCircle').dataset.tone = tone;
+    paintDetailFace(rec);
     $('memoInput').value = rec.note || '';
     renderDetailStages();
     renderEmojiGrid();
@@ -856,6 +894,19 @@
     armDelete(false);
     $('detailWrap').hidden = false;
     document.body.style.overflow = 'hidden';
+  }
+
+  // 상세 시트의 동그란 그림 — '글만 보기'면 음식 이름 글자만
+  function paintDetailFace(rec) {
+    const circle = $('detailCircle');
+    const el = $('detailEmoji');
+    if (draftNoIcon) {
+      circle.classList.add('asText');
+      el.textContent = rec ? rec.food.slice(0, 4) : '글자';
+      return;
+    }
+    circle.classList.remove('asText');
+    el.textContent = draftEmoji || (rec ? rec.food.slice(0, 1) : '🍽️');
   }
 
   function closeDetail() {
@@ -878,8 +929,9 @@
   }
 
   function renderEmojiGrid() {
-    $('emojiGrid').innerHTML = EMOJI_PALETTE
-      .map((e) => `<button type="button" data-emoji="${e}" class="${draftEmoji === e ? 'on' : ''}" aria-label="${e}">${e}</button>`)
+    const textBtn = `<button type="button" class="emoji-none${draftNoIcon ? ' on' : ''}" data-emoji="none" aria-pressed="${draftNoIcon ? 'true' : 'false'}">글만 보기 (그림 없이)</button>`;
+    $('emojiGrid').innerHTML = textBtn + EMOJI_PALETTE
+      .map((e) => `<button type="button" data-emoji="${e}" class="${!draftNoIcon && draftEmoji === e ? 'on' : ''}" aria-label="${e}">${e}</button>`)
       .join('');
   }
 
@@ -899,10 +951,18 @@
     if (!rec) return;
     rec.stage = draftStage;
     rec.note = $('memoInput').value.trim().slice(0, 120);
-    if (draftEmoji) {
+    if (draftNoIcon) {
+      rec.noIcon = true;
+      rec.emoji = '';
+    } else if (draftEmoji) {
+      rec.noIcon = false;
       rec.emoji = draftEmoji;
       const f = FOODS.find((x) => x.e === draftEmoji);
       rec.tone = f ? toneOf(f.t) : draftTone;
+    } else {
+      rec.noIcon = false;
+      rec.emoji = '';
+      rec.tone = draftTone;
     }
     rec.updatedAt = Date.now();
     commit(rec);
@@ -970,15 +1030,69 @@
     return yy;
   }
 
+  /* ───────── 가족 사진 · 뿡뿡이 캐릭터 그림 ───────── */
+  const art = { photos: {}, character: null };
+  let artPromise = null;
+
+  function loadImage(src) {
+    return new Promise((resolve) => {
+      const im = new Image();
+      im.onload = () => resolve(im.naturalWidth ? im : null);
+      im.onerror = () => resolve(null);
+      im.src = src;
+    });
+  }
+
+  function ensureArt() {
+    if (!artPromise) {
+      artPromise = Promise.all([
+        ...FAMILY.map((f) => loadImage(f.photo).then((im) => { art.photos[f.id] = im; })),
+        loadImage(CHARACTER_SRC).then((im) => { art.character = im; }),
+      ]).then(() => true);
+    }
+    return artPromise;
+  }
+
+  // 둥근 사진을 꾹 찍은 스티커처럼 카드에 붙여요
+  function drawPhotoCircle(ctx, img, cx, cy, r) {
+    if (!img) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+    const scale = Math.max((r * 2) / img.width, (r * 2) / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    ctx.drawImage(img, cx - w / 2, cy - h / 2, w, h);
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 7;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + 4.5, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(243, 223, 204, .95)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  }
+
   function buildShareCard() {
     const W = 1080;
-    const H = 1350;
-    const cv = document.createElement('canvas');
+    const H = 1350;    const cv = document.createElement('canvas');
     cv.width = W;
     cv.height = H;
     const x = cv.getContext('2d');
     const f = familyOf(who);
     const today = rangeRecords(who, 'today');
+    if (window.__bbung) {
+      window.__bbung.cardInfo = {
+        who,
+        total: today.length,
+        textOnly: today.filter((r) => r.noIcon).length,
+        icons: today.filter((r) => !r.noIcon).length,
+      };
+    }
     const EMOJI_FONT = '"Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji", sans-serif';
     const KR = '"Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif';
 
@@ -997,6 +1111,9 @@
     x.fillStyle = '#EDE4FC';
     x.beginPath(); x.arc(120, 1240, 190, 0, Math.PI * 2); x.fill();
     x.globalAlpha = 1;
+
+    // 왼쪽 위에 가족 사진 스티커
+    drawPhotoCircle(x, art.photos[who], 112, 196, 58);
 
     x.textAlign = 'center';
     x.fillStyle = '#B08A74';
@@ -1024,7 +1141,7 @@
     const by = 352;
     const bw = W - 124;
     const maxCount = STAGES.reduce((m, st) => Math.max(m, today.filter((r) => r.stage === st.id).length), 0);
-    const rows = Math.max(2, Math.min(4, maxCount));
+    const rows = Math.max(1, Math.min(4, maxCount));
     const bh = 96 + rows * 124 + 22;
     roundRect(x, bx, by, bw, bh, 44);
     x.fillStyle = 'rgba(255, 253, 249, 0.92)';
@@ -1056,6 +1173,18 @@
         x.strokeStyle = '#F3E5D6';
         x.lineWidth = 2;
         x.stroke();
+
+        if (r.noIcon) {
+          // 그림 없이 글자만 보여 주는 음식
+          const full = r.food.length > 7 ? `${r.food.slice(0, 7)}…` : r.food;
+          x.fillStyle = '#5C473B';
+          x.font = `800 27px ${KR}`;
+          x.fillText(full, cx + colW / 2, cy + 56);
+          x.fillStyle = '#BEAE9F';
+          x.font = `600 18px ${KR}`;
+          x.fillText('글자만', cx + colW / 2, cy + 86);
+          return;
+        }
 
         x.beginPath();
         x.arc(cx + colW / 2, cy + 41, 30, 0, Math.PI * 2);
@@ -1112,35 +1241,25 @@
     const tipEnd = tipY + 128;
     if (tipEnd + 150 < H - 140) {
       const my = (tipEnd + H - 140) / 2;
-      const mr = 44;
-      // 작은 뿡뿡이 캐릭터
-      x.fillStyle = '#BFE9D6';
-      x.beginPath(); x.arc(W / 2 - 48, my - 62, 16, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#BFE9D6';
-      x.beginPath(); x.arc(W / 2 - 26, my - 72, 12, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#FFD7BE';
-      x.beginPath(); x.arc(W / 2 + 46, my - 64, 18, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#FFD7BE';
-      x.beginPath(); x.arc(W / 2 + 68, my - 74, 12, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#FFFDF8';
-      x.beginPath(); x.arc(W / 2, my, mr + 14, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#FFE9C9';
-      x.beginPath(); x.arc(W / 2, my, mr, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#5B463A';
-      x.beginPath(); x.arc(W / 2 - 15, my - 4, 5, 0, Math.PI * 2); x.fill();
-      x.beginPath(); x.arc(W / 2 + 15, my - 4, 5, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#FFB3B3';
-      x.globalAlpha = 0.7;
-      x.beginPath(); x.arc(W / 2 - 28, my + 12, 7, 0, Math.PI * 2); x.fill();
-      x.beginPath(); x.arc(W / 2 + 28, my + 12, 7, 0, Math.PI * 2); x.fill();
-      x.globalAlpha = 1;
-      x.strokeStyle = '#7A5B4A';
-      x.lineWidth = 3;
-      x.beginPath(); x.arc(W / 2, my + 14, 8, 0.15 * Math.PI, 0.85 * Math.PI); x.stroke();
-
+      const cs = 210;
+      if (art.character) {
+        x.drawImage(art.character, W / 2 - cs / 2, my - cs / 2 - 12, cs, cs);
+      } else {
+        x.fillStyle = '#FFFDF8';
+        x.beginPath(); x.arc(W / 2, my, 58, 0, Math.PI * 2); x.fill();
+        x.fillStyle = '#FFE9C9';
+        x.beginPath(); x.arc(W / 2, my, 44, 0, Math.PI * 2); x.fill();
+        x.fillStyle = '#5B463A';
+        x.beginPath(); x.arc(W / 2 - 15, my - 4, 5, 0, Math.PI * 2); x.fill();
+        x.beginPath(); x.arc(W / 2 + 15, my - 4, 5, 0, Math.PI * 2); x.fill();
+        x.strokeStyle = '#7A5B4A';
+        x.lineWidth = 3;
+        x.beginPath(); x.arc(W / 2, my + 14, 8, 0.15 * Math.PI, 0.85 * Math.PI); x.stroke();
+      }
       x.fillStyle = '#A08C7E';
       x.font = `600 24px ${KR}`;
-      x.fillText('매일 기록하면 내 장 패턴이 보여요', W / 2, my + 96);
+      x.textAlign = 'center';
+      x.fillText('매일 기록하면 내 장 패턴이 보여요', W / 2, my + 118);
     }
 
     x.fillStyle = '#B8A395';
@@ -1167,6 +1286,7 @@
       : `${f.name}의 오늘 기록이 아직 없어요 · 그래도 카드는 만들어 볼게요`;
 
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 30)));
+    await ensureArt();
     let canvas;
     try {
       canvas = buildShareCard();
@@ -1200,22 +1320,57 @@
     document.body.appendChild(a);
     a.click();
     setTimeout(() => a.remove(), 500);
-    showToast('이미지를 저장했어요 💌');
+    showToast('이미지를 내려받았어요 · 사진 앱에 없다면 카드를 꾹 눌러 저장해 주세요');
+  }
+
+  function pngFile(blob) {
+    return new File([blob], fileName(), { type: 'image/png' });
+  }
+
+  async function cardBlob() {
+    if (shareBlob) return shareBlob;
+    if (!shareUrlCache) return null;
+    try {
+      return await (await fetch(shareUrlCache)).blob();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // 아이폰은 <a download>로 사진함에 저장되지 않아요.
+  // 공유 시트를 열어 '이미지 저장'을 누르게 하고, 데스크톱에서만 내려받기로 대신해요.
+  async function saveCard() {
+    const blob = await cardBlob();
+    if (blob && navigator.share && navigator.canShare) {
+      const file = pngFile(blob);
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: '내 건강 뿡밍아웃' });
+          showToast("공유 창에서 '이미지 저장'을 누르거나 위 카드를 꾹 눌러 저장하세요");
+          return;
+        } catch (e) {
+          if (e && e.name === 'AbortError') return;
+        }
+      }
+    }
+    downloadCard();
   }
 
   async function sendCard() {
-    let blob = shareBlob;
-    if (!blob && shareUrlCache) {
-      blob = await (await fetch(shareUrlCache)).blob();
-    }
-    if (!blob) { downloadCard(); return; }
-    const file = new File([blob], fileName(), { type: 'image/png' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: '내 건강 뿡밍아웃', text: `${familyOf(who).name}의 뿡뿡이 기록 💨` });
-        return;
-      } catch (e) {
-        if (e && e.name === 'AbortError') return;
+    const blob = await cardBlob();
+    if (blob && navigator.share && navigator.canShare) {
+      const file = pngFile(blob);
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: '내 건강 뿡밍아웃',
+            text: `${familyOf(who).name}의 뿡뿡이 기록 💨`,
+          });
+          return;
+        } catch (e) {
+          if (e && e.name === 'AbortError') return;
+        }
       }
     }
     downloadCard();
@@ -1539,15 +1694,15 @@
       b.addEventListener('click', () => setView(b.dataset.view));
     });
 
-    document.querySelectorAll('#rangeTabs button').forEach((b) => {
-      b.addEventListener('click', () => {
-        range = b.dataset.range;
-        document.querySelectorAll('#rangeTabs button').forEach((x) => x.classList.toggle('on', x === b));
-        renderBoard();
-      });
-    });
+    $('brandHome').addEventListener('click', () => setView('log'));
 
     $('foodInput').addEventListener('input', renderPreview);
+    $('noIconBtn').addEventListener('click', () => {
+      noIconNext = !noIconNext;
+      renderNoIconToggle();
+      lastPreviewEmoji = '';
+      renderPreview();
+    });
     $('foodInput').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -1596,7 +1751,7 @@
 
     $('shareCardBtn').addEventListener('click', openShare);
     $('shareClose').addEventListener('click', closeShare);
-    $('shareSave').addEventListener('click', downloadCard);
+    $('shareSave').addEventListener('click', saveCard);
     $('shareSend').addEventListener('click', sendCard);
 
     $('detailClose').addEventListener('click', closeDetail);
@@ -1615,11 +1770,20 @@
     $('emojiGrid').addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-emoji]');
       if (!btn) return;
+      const rec = state.records.find((r) => r.id === editingId && !r.deleted);
+      if (btn.dataset.emoji === 'none') {
+        draftNoIcon = true;
+        draftEmoji = '';
+        paintDetailFace(rec);
+        renderEmojiGrid();
+        return;
+      }
+      draftNoIcon = false;
       draftEmoji = btn.dataset.emoji;
       const f = FOODS.find((x) => x.e === draftEmoji);
       draftTone = f ? toneOf(f.t) : draftTone;
-      $('detailEmoji').textContent = draftEmoji;
       $('detailCircle').dataset.tone = draftTone;
+      paintDetailFace(rec);
       renderEmojiGrid();
     });
 
@@ -1660,16 +1824,26 @@
     btn.setAttribute('aria-label', sound.on ? '소리 끄기' : '소리 켜기');
   }
 
+  // '그림 없이 글자만' 토글 상태
+  function renderNoIconToggle() {
+    const b = $('noIconBtn');
+    if (!b) return;
+    b.setAttribute('aria-pressed', noIconNext ? 'true' : 'false');
+    b.textContent = noIconNext ? '글자만 보기 켜짐' : '그림 없이 글자만';
+  }
+
   /* ───────── 시작 ───────── */
   function init() {
     load();
     renderFamily();
     renderSound();
+    renderNoIconToggle();
     markPicked();
     renderLog();
     renderBoard();
     bind();
     setView('log', { silent: true });
+    ensureArt();
 
     if (roomReady()) {
       setMode('connecting');
@@ -1683,11 +1857,14 @@
     }
 
     window.__bbung = {
-      version: '1',
+      version: '2',
       get records() { return state.records.slice(); },
       get who() { return who; },
       get share() { return { url: share.url, room: share.room }; },
       get mode() { return net.mode; },
+      photos: FAMILY.map((f) => f.photo),
+      artReady: () => ensureArt().then(() => Object.keys(art.photos).filter((k) => !!art.photos[k]).length),
+      get boardCount() { return $('board').querySelectorAll('.chip').length; },
       soundLog: sound.log,
       foods: FOODS.length,
       openDetail,

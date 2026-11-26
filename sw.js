@@ -1,9 +1,9 @@
-/* 뿡뿡이 기록 · 오프라인 캐시 (v1)
+/* 뿡뿡이 기록 · 오프라인 캐시 (v2)
  *  - HTML·코드: 네트워크 우선 → 오프라인일 때만 캐시 (새 HTML + 옛 JS 섞임 방지)
- *  - 아이콘·manifest: 캐시 우선
+ *  - 아이콘·사진·manifest: 캐시 우선
  */
-const CACHE = 'bbung-note-v1';
-const VERSION = '1';
+const CACHE = 'bbung-note-v2';
+const VERSION = '2';
 const ASSETS = [
   './',
   './index.html',
@@ -15,7 +15,14 @@ const ASSETS = [
   './icon.svg',
   './icon-192.png',
   './icon-512.png',
+  './icon-maskable.svg',
+  './icon-maskable-512.png',
   './apple-touch-icon.png',
+  './character.svg',
+  './photos/mom.jpg',
+  './photos/dad.jpg',
+  './photos/sarang.jpg',
+  './photos/harang.jpg',
 ];
 
 const isCode = (path) => /\/app\.js$/.test(path) || /\/styles\.css$/.test(path);
