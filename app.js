@@ -1002,7 +1002,7 @@
     const titleX = W / 2 - 22;
     x.fillText(title, titleX, 196);
     x.font = `400 50px ${EMOJI_FONT}`;
-    x.fillText('💨', titleX + titleW / 2 + 78, 192);
+    x.fillText('💨', titleX + titleW / 2 + 100, 192);
 
     x.fillStyle = '#F38AA8';
     x.font = `800 36px ${KR}`;
