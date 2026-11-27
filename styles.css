@@ -364,7 +364,7 @@ input, textarea { font-family: inherit; color: inherit; }
   border-radius: 15px;
   border: 1.5px solid #F1E1D1;
   background: #FFFCF7;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   outline: none;
   transition: border .18s ease, background .18s ease;
@@ -693,7 +693,7 @@ input, textarea { font-family: inherit; color: inherit; }
   border-radius: 15px;
   border: 1.5px solid #F1E1D1;
   background: #FFFCF7;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   resize: none;
   outline: none;
@@ -859,3 +859,16 @@ input, textarea { font-family: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* ===== 아이폰 화면 고정 (2026-11-28) =====
+   사파리·홈 화면 앱에서 화면이 커졌다 작아졌다 하지 않도록
+   - 입력창 글자는 16px 이상(아이폰 자동 확대 방지)
+   - 가로 넘침·바운스 스크롤 막음, 글자 자동 확대 막음 */
+html, body {
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html { touch-action: manipulation; }
+input, textarea, select { font-size: max(16px, 1em); }

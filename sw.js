@@ -3,8 +3,8 @@
  *  - 아이콘·사진·음식 그림·manifest: 캐시 우선
  *  - v3: 한국 음식·과일 그림(foods/*.webp) 32종 추가
  */
-const CACHE = 'bbung-note-v3';
-const VERSION = '3';
+const CACHE = 'bbung-note-v4';
+const VERSION = '4';
 const FOOD_PICS = [
   './foods/chamoe.webp', './foods/jadu.webp', './foods/gam.webp', './foods/muhwagwa.webp',
   './foods/seongnyu.webp', './foods/salgu.webp', './foods/daechu.webp', './foods/maesil.webp',
