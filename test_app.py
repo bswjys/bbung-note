@@ -228,11 +228,11 @@ async def run():
         check("manifest 이름", manifest.get("short_name") == "뿡뿡이 기록", str(manifest.get("short_name")))
         check("manifest 아이콘 3종", len(manifest.get("icons", [])) == 3)
         sw = await page.evaluate("fetch('./sw.js').then(r => r.text())")
-        check("sw 캐시 이름 bbung-note-v3", "bbung-note-v3" in sw)
+        check("sw 캐시 이름 bbung-note-v5", "bbung-note-v5" in sw)
         check("sw에 사진·캐릭터 캐시", "photos/harang.jpg" in sw and "character.svg" in sw)
         check("sw에 음식 그림 프리캐시", "foods/chamoe.webp" in sw and "foods/kimchi-jjigae.webp" in sw)
         html = await page.evaluate("fetch('./index.html').then(r => r.text())")
-        check("index ?v=3", "styles.css?v=3" in html and "app.js?v=3" in html)
+        check("index ?v=5", "styles.css?v=5" in html and "app.js?v=5" in html)
         for icon in ["icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png",
                      "icon.svg", "icon-maskable.svg", "character.svg", "photos/mom.jpg", "photos/dad.jpg",
                      "photos/sarang.jpg", "photos/harang.jpg"]:
